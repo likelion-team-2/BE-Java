@@ -15,70 +15,54 @@ import java.time.LocalDate;
 
 public class UserRequestDTO implements Serializable {
 
+    @NotBlank(message = "UserName must not be blank")
+    private String username;
+
     @NotBlank(message = "Password must not be blank")
     private String password;
-    @NotBlank(message = "Name must not be blank")
-    private String name;
 
     @Email(message = "Email invalid format")
     private String email;
 
-    @NotNull(message = "Birthdate not be null")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    @JsonFormat(pattern = "MM-dd-yyyy")
-    private LocalDate birthDate;
+    @NotBlank(message = "Nickname must not be blank")
+    private String nickname;
 
-    @Pattern(regexp = "^\\d{10}$", message = "Phone number must be numeric")
-    @PhoneNumber(message = "phone invalid format")
-    private String phoneNumber;
+    @NotNull(message = "Region Country not be null")
+    private String region_country;
 
-    @NotNull(message = "Telegram not be null")
-    private String telegram;
-    @NotNull(message = "Address not be null")
-    private String address;
-    @NotNull (message = "Sex not be null")
-    private String sex;
+    @NotNull(message = "Role not be null")
+    private String role;
 
-    public UserRequestDTO(String password, String name, String email, LocalDate birthDate, String phoneNumber, String telegram, String address, String sex) {
+    public UserRequestDTO(String username, String password, String email, String nickname, String region_country, String role) {
+        this.username = username;
         this.password = password;
-        this.name = name;
         this.email = email;
-        this.birthDate = birthDate;
-        this.phoneNumber = phoneNumber;
-        this.telegram = telegram;
-        this.address = address;
-        this.sex = sex;
+        this.nickname = nickname;
+        this.region_country = region_country;
+        this.role = role;
     }
 
-    public String getPassword() {
+    public @NotBlank(message = "UserName must not be blank") String getUsername() {
+        return username;
+    }
+
+    public @NotBlank(message = "Password must not be blank") String getPassword() {
         return password;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
+    public @Email(message = "Email invalid format") String getEmail() {
         return email;
     }
 
-    public LocalDate getBirthDate() {
-        return birthDate;
+    public @NotBlank(message = "Nickname must not be blank") String getNickname() {
+        return nickname;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public @NotNull(message = "Region Country not be null") String getRegion_country() {
+        return region_country;
     }
 
-    public String getTelegram() {
-        return telegram;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public String getSex() {
-        return sex;
+    public @NotNull(message = "Role not be null") String getRole() {
+        return role;
     }
 }

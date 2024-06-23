@@ -11,7 +11,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String signUp(UserRequestDTO requestDTO) {
         System.out.println("Save user to database");
-        if (requestDTO.getName().equals("admin")) {
+        if (requestDTO.getUsername().equals("admin")) {
              throw new ResourceNotFoundException("User Not Found");
         }
         return "User created";

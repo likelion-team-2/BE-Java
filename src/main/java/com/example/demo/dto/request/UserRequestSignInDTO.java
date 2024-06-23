@@ -11,24 +11,17 @@ import java.io.Serializable;
 public class UserRequestSignInDTO implements Serializable {
     @Email(message = "Email should be valid")
     private String email;
-    @Pattern(regexp = "^\\d{10}$", message = "Phone number must be numeric")
-    @PhoneNumber(message = "phone invalid format")
-    private String phoneNumber;
+
     @NotBlank(message = "Password is required")
     private String password;
 
-    public UserRequestSignInDTO(String email, String phoneNumber, String password) {
+    public UserRequestSignInDTO(String email, String password) {
         this.email = email;
-        this.phoneNumber = phoneNumber;
         this.password = password;
     }
 
     public String getEmail() {
         return email;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
     }
 
     public String getPassword() {
