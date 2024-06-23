@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
@@ -13,8 +14,8 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
+@Builder
 public class UserRequestDTO implements Serializable {
-
     @NotBlank(message = "UserName must not be blank")
     private String username;
 
