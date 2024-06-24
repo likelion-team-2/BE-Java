@@ -5,7 +5,12 @@ import com.example.demo.dto.request.UserRequestSignInDTO;
 
 public interface UserService {
 
-    String signUp(UserRequestDTO requestDTO);
+    /**
+     * Service for handle user sign up
+     * @param requestDTO
+     * @return  Long
+     */
+    Long signUp(UserRequestDTO requestDTO);
 
     /**
      * Service for handle user login
