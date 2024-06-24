@@ -50,13 +50,10 @@ public class UserServiceImpl implements UserService {
                 .email(userDto.getEmail())
                 .nickname(userDto.getNickname())
                 .regionCountry(userDto.getRegion_country())
-                //    @Column(name = "created_at")
-                //    private Timestamp createdAt;
                 .createdAt(new java.sql.Timestamp(System.currentTimeMillis()))
                 .build();
         userRepository.save(newUser);
 
-        System.out.println(newUser.getId());
         return newUser.getId();
     }
 
