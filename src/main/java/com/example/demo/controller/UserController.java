@@ -30,7 +30,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
     @Operation(summary = "Add a new user", description = "Add a new user to the system",  responses = {
             @ApiResponse(responseCode = "200", description = "User created",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -38,33 +37,16 @@ public class UserController {
                             value = "{\"status\": 200, \"message\": \"User created\", \"data\": \"user_id\"}"
                             ))),})
     @PostMapping("/user/signup")
-//    public ResponseEntity<Response> addUser(@Valid @RequestBody UserRequestDTO userDTO) {
-//        System.out.println("Received user signup request: " + Json.pretty(userDTO));
-//        try {
-//            // Logic to create user
-//            // userService.createUser(userDTO);
-//
-//            // Assuming successful creation
-//
-//            // Return success response
-//            Response response = new Response(HttpStatus.OK.value(),"Đăng kí thành công",  "userData " + "user_id");
-//            return ResponseEntity.ok(response);
-//        } catch (Exception ex) {
-//            // Return error response
-//            Response response = new Response(HttpStatus.CONFLICT.value(),"Đăng kí thất bại",  null);
-//            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-//        }
-//    }
-    public ResponseData<String> addUser(@Valid @RequestBody UserRequestDTO userDTO) {
+    public ResponseData<Long> signUp(@Valid @RequestBody UserRequestDTO userDTO) {
         System.out.println("Received user signup request: " + Json.pretty(userDTO));
         try {
             // Logic to create user
-            // userService.createUser(userDTO);
-            userService.signUp(userDTO);
-            return new ResponseData<>(HttpStatus.OK.value(), "User created", "user_id");
+//            userService.signUp(userDTO);
+            Long id = userService.signUp(userDTO);
+            return new ResponseData<>(HttpStatus.OK.value(), "User created", id );
         } catch (Exception e) {
             // Return error response
-            return new ResponseError(HttpStatus.CONFLICT.value(), "Signup fail", null);
+            return new ResponseError(HttpStatus.CONFLICT.value(), e.getMessage(), null);
         }
     }
 
@@ -80,6 +62,7 @@ public class UserController {
         System.out.println("Received user sign in request: " + Json.pretty(userRequestSignInDTO));
         return new ResponseData<>(HttpStatus.OK.value(), "User signed in", "Token: "+ "token");
     }
+
 
     @Operation(summary = "Update user", description = "Update user in the system",  responses = {
             @ApiResponse(responseCode = "200", description = "User updated",

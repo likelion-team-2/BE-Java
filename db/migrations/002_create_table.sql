@@ -6,7 +6,7 @@ CREATE TABLE users (
                        email VARCHAR(255) NOT NULL UNIQUE,
                        nickname VARCHAR(255),
                        region_country VARCHAR(255),
-                       role VARCHAR(255) CHECK (role IN ('admin', 'users')) DEFAULT NULL,
+--                        role VARCHAR(255) CHECK (role IN ('admin', 'users')) DEFAULT NULL,
                        created_at TIMESTAMP(3) DEFAULT NULL,
                        updated_at TIMESTAMP(3) DEFAULT NULL,
                        token VARCHAR(255),

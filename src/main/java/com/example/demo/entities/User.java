@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -37,5 +39,18 @@ public class User {
 
     @Column(name = "region_country")
     private String regionCountry;
+
+    @Column(name = "created_at")
+    private Timestamp createdAt;
+
+    @Column(name = "updated_at")
+    private Timestamp updatedAt;
+
+    @Column(name = "token")
+    private String token;
+
+    @Column(name = "token_expired")
+    private Timestamp tokenExpired;
+
 }
 
