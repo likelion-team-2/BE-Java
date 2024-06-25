@@ -2,20 +2,23 @@ package com.example.demo.service.impl;
 
 import com.example.demo.dto.request.UserRequestDTO;
 import com.example.demo.dto.request.UserRequestSignInDTO;
+import com.example.demo.dto.response.UserAuthResponse;
+import com.example.demo.entities.RefreshToken;
 import com.example.demo.entities.User;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repositories.UserRepository;
 import com.example.demo.service.UserService;
 import com.example.demo.util.HashedPassword;
+import com.example.demo.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.nio.CharBuffer;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
 
-import static com.example.demo.util.PasswordUtil.hashAndSaltPassword;
+import com.example.demo.util.PasswordUtil;
 
 
 @Service
@@ -23,7 +26,8 @@ import static com.example.demo.util.PasswordUtil.hashAndSaltPassword;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+    private final RefreshTokenServiceImpl refreshTokenService;
 
     /**
      * {@inheritDoc}
@@ -43,7 +47,7 @@ public class UserServiceImpl implements UserService {
         }
 
         String password = userDto.getPassword();
-        HashedPassword hashedPassword = hashAndSaltPassword(password);
+        HashedPassword hashedPassword = PasswordUtil.hashAndSaltPassword(password);
         User newUser = User.builder()
                 .username(userDto.getUsername())
                 .password(hashedPassword.getHashedPassword())
@@ -61,27 +65,24 @@ public class UserServiceImpl implements UserService {
      * {@inheritDoc}
      */
     @Override
-    public UserRequestDTO signIn(UserRequestSignInDTO userDto) {
-        Optional<User> user = userRepository.findByUsername(userDto.getUsernameOrEmail());
+    public UserAuthResponse signIn(UserRequestSignInDTO userRequestDto) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        String usernameOrEmail = userRequestDto.getUsernameOrEmail();
+        Optional<User> user = userRepository.findByUsername(usernameOrEmail);
         if (user.isEmpty()) {
-            user = userRepository.findByEmail(userDto.getUsernameOrEmail());
+            user = userRepository.findByEmail(usernameOrEmail);
             if (user.isEmpty()) {
                 throw new ResourceNotFoundException("User Not Found");
             }
-
             User userFounded = user.get();
-            UserRequestDTO userRequestDTO = UserRequestDTO.builder()
-                    .email(userFounded.getEmail())
-                    .username(userFounded.getUsername())
-                    .password(userFounded.getPassword())
-                    .region_country(userFounded.getRegionCountry())
-                    .nickname(userFounded.getNickname())
-                    .build();
 
-            if (passwordEncoder.matches(CharBuffer.wrap(userDto.getPassword()), userRequestDTO.getPassword())) {
-                return userRequestDTO;
+            if (PasswordUtil.verifyPassword(userRequestDto.getPassword(), userFounded.getPassword(), "salt")) { //TODO: Get salt value
+                String accessToken = jwtUtil.generateAccessTokenFromUsername(userFounded.getUsername());
+                RefreshToken refreshToken = refreshTokenService.createRefreshToken(userFounded.getId());
+                return new UserAuthResponse(accessToken, refreshToken.getToken(), userFounded.getId(),
+                        userFounded.getUsername(), userFounded.getEmail());
             }
+            throw new ResourceNotFoundException("Invalid password");
         }
-        throw new ResourceNotFoundException("Invalid password");
+        throw new ResourceNotFoundException("User Not Found");
     }
 }

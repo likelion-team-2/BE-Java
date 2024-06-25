@@ -2,6 +2,10 @@ package com.example.demo.service;
 
 import com.example.demo.dto.request.UserRequestDTO;
 import com.example.demo.dto.request.UserRequestSignInDTO;
+import com.example.demo.dto.response.UserAuthResponse;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 public interface UserService {
 
@@ -17,6 +21,6 @@ public interface UserService {
      * @param userRequestSignInDTO
      * @return  UserRequestDTO
      */
-    UserRequestDTO signIn(UserRequestSignInDTO userRequestSignInDTO);
+    UserAuthResponse signIn(UserRequestSignInDTO userRequestSignInDTO) throws NoSuchAlgorithmException, InvalidKeySpecException;
 
 }
