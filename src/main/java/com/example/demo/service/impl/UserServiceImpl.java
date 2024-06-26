@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
-import java.util.UUID;
+import com.example.demo.util.UUID;
 
 import com.example.demo.util.PasswordUtil;
 
@@ -38,18 +38,27 @@ public class UserServiceImpl implements UserService {
     public UUID signUp(UserRequestDTO userDto) {
         Optional<User> existingUser = userRepository.findByUsername(userDto.getUsername());
         if (existingUser.isPresent()) {
-            throw new ResourceNotFoundException("User đã tồn tại");
+            //UserName already exist
+            throw new ResourceNotFoundException("1");
         } else if (userDto.getUsername().toLowerCase().contains("admin")){
-            throw new ResourceNotFoundException("Can't create username with characters like admin");
+            //Can't create username with characters like admin
+            throw new ResourceNotFoundException("2");
         } else if (userDto.getPassword().length() < 8){
-            throw new ResourceNotFoundException("Password must be at least 8 characters");
+            //Password must be at least 8 characters
+            throw new ResourceNotFoundException("3");
         } else if (userDto.getNickname().toLowerCase().contains("admin")){
-            throw new ResourceNotFoundException("Can't create nickname with characters like admin");
+            //Can't create nickname with characters like admin
+            throw new ResourceNotFoundException("4");
+        } else if (userRepository.findByEmail(userDto.getEmail()).isPresent()){
+           //Email already exist
+            throw new ResourceNotFoundException("5");
         }
 
         String password = userDto.getPassword();
         HashedPassword hashedPassword = PasswordUtil.hashAndSaltPassword(password);
+        String user_id = UUID.GenerateUUID();
         User newUser = User.builder()
+                .userId(user_id)
                 .username(userDto.getUsername())
                 .password(hashedPassword.getHashedPassword())
                 .email(userDto.getEmail())
@@ -58,8 +67,7 @@ public class UserServiceImpl implements UserService {
                 .createdAt(new java.sql.Timestamp(System.currentTimeMillis()))
                 .build();
         userRepository.save(newUser);
-
-        return newUser.getId();
+        return "true";
     }
 
     /**

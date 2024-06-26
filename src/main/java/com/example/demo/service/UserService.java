@@ -13,7 +13,7 @@ public interface UserService {
     /**
      * Service for handle user sign up
      * @param requestDTO
-     * @return  Long
+     * @return  String
      */
     UUID signUp(UserRequestDTO requestDTO);
 
