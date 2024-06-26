@@ -60,9 +60,8 @@ public class PasswordUtil {
         return new HashedPassword(hashedPassword, Base64.getEncoder().encodeToString(salt));
     }
 
-    public static boolean verifyPassword(String originalPassword, String storedHash, String storedSalt) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        System.out.println(storedSalt); // Print out the salt value for verification
-        byte[] salt = Base64.getDecoder().decode(storedSalt);
+    public static boolean verifyPassword(String originalPassword, String storedHash) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        byte[] salt = getSalt();
         String newHash = hashPassword(originalPassword, salt);
         return newHash.equals(storedHash);
     }

@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
      */
     @SneakyThrows
     @Override
-    public UUID signUp(UserRequestDTO userDto) {
+    public String signUp(UserRequestDTO userDto) {
         Optional<User> existingUser = userRepository.findByUsername(userDto.getUsername());
         if (existingUser.isPresent()) {
             //UserName already exist
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
             }
             User userFounded = user.get();
 
-            if (PasswordUtil.verifyPassword(userRequestDto.getPassword(), userFounded.getPassword(), "salt")) { //TODO: Get salt value
+            if (PasswordUtil.verifyPassword(userRequestDto.getPassword(), userFounded.getPassword())) {
                 String accessToken = jwtUtil.generateAccessTokenFromUsername(userFounded.getUsername());
                 RefreshToken refreshToken = refreshTokenService.createRefreshToken(userFounded.getId());
                 return new UserAuthResponse(accessToken, refreshToken.getToken(), userFounded.getId(),

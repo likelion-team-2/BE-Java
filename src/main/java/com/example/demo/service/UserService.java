@@ -15,7 +15,7 @@ public interface UserService {
      * @param requestDTO
      * @return  String
      */
-    UUID signUp(UserRequestDTO requestDTO);
+    String signUp(UserRequestDTO requestDTO);
 
     /**
      * Service for handle user login
