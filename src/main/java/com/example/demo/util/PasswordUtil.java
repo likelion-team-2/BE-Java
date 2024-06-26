@@ -1,5 +1,6 @@
 package com.example.demo.util;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -16,8 +17,16 @@ public class PasswordUtil {
     private static String hashAlgorithm; // Static field to hold the hashing algorithm
 
     @Value("${instance.hash.password}") // Injecting the value from application.properties
-    public void setHashAlgorithm(String hashAlgorithm) {
-        PasswordUtil.hashAlgorithm = hashAlgorithm;
+    private String hashAlgorithmValue;
+
+    @PostConstruct
+    private void init() {
+        PasswordUtil.hashAlgorithm = this.hashAlgorithmValue;
+        System.out.println("Hash Algorithm: " + hashAlgorithm); // Print out the value for verification
+    }
+
+    public static String getHashAlgorithm() {
+        return hashAlgorithm;
     }
 
     public static byte[] generateSalt() throws NoSuchAlgorithmException {

@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.response.ResponseData;
 import com.example.demo.dto.response.ResponseError;
 import com.example.demo.dto.response.ResponseSuccess;
+import com.example.demo.dto.response.UserSignInResponse;
 import com.example.demo.service.impl.UserServiceImpl;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,13 +39,15 @@ public class UserController {
                             value = "{\"status\": 200, \"message\": \"User created\", \"data\": \"user_id\"}"
                             ))),})
     @PostMapping("/signup")
-    public ResponseData<Long> signUp(@Valid @RequestBody UserRequestDTO userDTO) {
+    public ResponseData<UserSignInResponse> signUp(@Valid @RequestBody UserRequestDTO userDTO) {
         System.out.println("Received user signup request: " + Json.pretty(userDTO));
         try {
             // Logic to create user
 //            userService.signUp(userDTO);
-            Long id = userService.signUp(userDTO);
-            return new ResponseData<>(HttpStatus.OK.value(), "User created", id );
+
+//            Long id = userService.signUp(userDTO);
+            UserSignInResponse userSignInResponse = userService.signUp(userDTO);
+            return new ResponseData<>(HttpStatus.OK.value(), "User created", userSignInResponse );
         } catch (Exception e) {
             // Return error response
             return new ResponseError(HttpStatus.CONFLICT.value(), e.getMessage(), null);

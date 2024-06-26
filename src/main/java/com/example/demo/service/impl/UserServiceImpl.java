@@ -3,6 +3,7 @@ package com.example.demo.service.impl;
 import com.example.demo.dto.request.UserRequestDTO;
 import com.example.demo.dto.request.UserRequestSignInDTO;
 import com.example.demo.dto.response.UserAuthResponse;
+import com.example.demo.dto.response.UserSignInResponse;
 import com.example.demo.entities.RefreshToken;
 import com.example.demo.entities.User;
 import com.example.demo.exception.ResourceNotFoundException;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
+import com.example.demo.util.UUID;
 
 import com.example.demo.util.PasswordUtil;
 
@@ -34,21 +36,26 @@ public class UserServiceImpl implements UserService {
      */
     @SneakyThrows
     @Override
-    public Long signUp(UserRequestDTO userDto) {
+    public UserSignInResponse signUp(UserRequestDTO userDto) {
         Optional<User> existingUser = userRepository.findByUsername(userDto.getUsername());
         if (existingUser.isPresent()) {
-            throw new ResourceNotFoundException("User đã tồn tại");
+            throw new ResourceNotFoundException("UserName already exist");
         } else if (userDto.getUsername().toLowerCase().contains("admin")){
             throw new ResourceNotFoundException("Can't create username with characters like admin");
         } else if (userDto.getPassword().length() < 8){
             throw new ResourceNotFoundException("Password must be at least 8 characters");
         } else if (userDto.getNickname().toLowerCase().contains("admin")){
             throw new ResourceNotFoundException("Can't create nickname with characters like admin");
+        } else if (userRepository.findByEmail(userDto.getEmail()).isPresent()){
+            throw new ResourceNotFoundException("Email already exist");
         }
 
         String password = userDto.getPassword();
         HashedPassword hashedPassword = PasswordUtil.hashAndSaltPassword(password);
+        String user_id = UUID.GenerateUUID();
+
         User newUser = User.builder()
+                .userId(user_id)
                 .username(userDto.getUsername())
                 .password(hashedPassword.getHashedPassword())
                 .email(userDto.getEmail())
@@ -58,7 +65,8 @@ public class UserServiceImpl implements UserService {
                 .build();
         userRepository.save(newUser);
 
-        return newUser.getId();
+        UserSignInResponse UserSignInResponse = new UserSignInResponse(newUser.getUserId(), newUser.getUsername(), newUser.getEmail(), password, newUser.getNickname(), newUser.getRegionCountry());
+        return UserSignInResponse;
     }
 
     /**
