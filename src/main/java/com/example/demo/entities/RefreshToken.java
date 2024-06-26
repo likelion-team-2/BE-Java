@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -34,6 +35,9 @@ public class RefreshToken {
     @Column(nullable = false, unique = true)
     private String token;
 
-    @Column(nullable = false)
-    private Instant expiryDate;
+    @Column(nullable = false, name="created_at")
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false, name="expired_at")
+    private Instant expiredAt;
 }

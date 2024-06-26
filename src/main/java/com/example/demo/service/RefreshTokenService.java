@@ -4,6 +4,7 @@ import com.example.demo.dto.response.TokenRefreshResponse;
 import com.example.demo.entities.RefreshToken;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public interface RefreshTokenService {
 
@@ -19,7 +20,7 @@ public interface RefreshTokenService {
      * @param userId
      * @return refresh token
      */
-    RefreshToken createRefreshToken(Long userId);
+    RefreshToken createRefreshToken(UUID userId);
 
     /**
      * Verify expiration of refresh token
@@ -32,5 +33,5 @@ public interface RefreshTokenService {
      * Used when logout
      * @param userId
      */
-    int deleteByUserId(Long userId);
+    int deleteByUserId(UUID userId);
 }

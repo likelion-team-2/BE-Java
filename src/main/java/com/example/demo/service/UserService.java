@@ -6,6 +6,7 @@ import com.example.demo.dto.response.UserAuthResponse;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.UUID;
 
 public interface UserService {
 
@@ -14,7 +15,7 @@ public interface UserService {
      * @param requestDTO
      * @return  Long
      */
-    Long signUp(UserRequestDTO requestDTO);
+    UUID signUp(UserRequestDTO requestDTO);
 
     /**
      * Service for handle user login

@@ -1,7 +1,5 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.dto.response.ResponseData;
-import com.example.demo.dto.response.TokenRefreshResponse;
 import com.example.demo.entities.RefreshToken;
 import com.example.demo.exception.TokenRefreshException;
 import com.example.demo.repositories.RefreshTokenRepository;
@@ -9,11 +7,11 @@ import com.example.demo.repositories.UserRepository;
 import com.example.demo.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,11 +37,12 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
      * ${inheritDoc}
      */
     @Override
-    public RefreshToken createRefreshToken(Long userId) {
+    public RefreshToken createRefreshToken(UUID userId) {
         RefreshToken refreshToken = new RefreshToken();
 
         refreshToken.setUser(userRepository.findById(userId).get());
-        refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
+        refreshToken.setExpiredAt(Instant.now().plusMillis(refreshTokenDurationMs));
+        refreshToken.setCreatedAt(LocalDateTime.now());
         refreshToken.setToken(UUID.randomUUID().toString());
 
         refreshToken = refreshTokenRepository.save(refreshToken);
@@ -55,7 +54,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
      */
     @Override
     public RefreshToken verifyExpiration(RefreshToken token) {
-        if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
+        if (token.getExpiredAt().compareTo(Instant.now()) < 0) {
             refreshTokenRepository.delete(token);
             throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new signin request");
         }
@@ -68,7 +67,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
      */
     @Override
     @Transactional
-    public int deleteByUserId(Long userId) {
+    public int deleteByUserId(UUID userId) {
         return refreshTokenRepository.deleteByUser(userRepository.findById(userId).get());
     }
 }

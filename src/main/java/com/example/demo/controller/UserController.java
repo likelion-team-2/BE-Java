@@ -20,6 +20,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.dto.request.UserRequestDTO;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/v1/api/user")
 @Validated
@@ -38,12 +40,12 @@ public class UserController {
                             value = "{\"status\": 200, \"message\": \"User created\", \"data\": \"user_id\"}"
                             ))),})
     @PostMapping("/signup")
-    public ResponseData<Long> signUp(@Valid @RequestBody UserRequestDTO userDTO) {
+    public ResponseData<UUID> signUp(@Valid @RequestBody UserRequestDTO userDTO) {
         System.out.println("Received user signup request: " + Json.pretty(userDTO));
         try {
             // Logic to create user
 //            userService.signUp(userDTO);
-            Long id = userService.signUp(userDTO);
+            UUID id = userService.signUp(userDTO);
             return new ResponseData<>(HttpStatus.OK.value(), "User created", id );
         } catch (Exception e) {
             // Return error response

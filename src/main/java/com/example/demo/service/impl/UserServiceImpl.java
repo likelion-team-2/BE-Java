@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.example.demo.util.PasswordUtil;
 
@@ -34,7 +35,7 @@ public class UserServiceImpl implements UserService {
      */
     @SneakyThrows
     @Override
-    public Long signUp(UserRequestDTO userDto) {
+    public UUID signUp(UserRequestDTO userDto) {
         Optional<User> existingUser = userRepository.findByUsername(userDto.getUsername());
         if (existingUser.isPresent()) {
             throw new ResourceNotFoundException("User đã tồn tại");
@@ -79,7 +80,8 @@ public class UserServiceImpl implements UserService {
                 String accessToken = jwtUtil.generateAccessTokenFromUsername(userFounded.getUsername());
                 RefreshToken refreshToken = refreshTokenService.createRefreshToken(userFounded.getId());
                 return new UserAuthResponse(accessToken, refreshToken.getToken(), userFounded.getId(),
-                        userFounded.getUsername(), userFounded.getEmail());
+                        userFounded.getUsername(), userFounded.getEmail(), userFounded.getNickname(),
+                        userFounded.getRegionCountry());
             }
             throw new ResourceNotFoundException("Invalid password");
         }
