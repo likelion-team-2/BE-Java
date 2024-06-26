@@ -3,7 +3,6 @@ package com.example.demo.service.impl;
 import com.example.demo.dto.request.UserRequestDTO;
 import com.example.demo.dto.request.UserRequestSignInDTO;
 import com.example.demo.dto.response.UserAuthResponse;
-import com.example.demo.dto.response.UserSignInResponse;
 import com.example.demo.entities.RefreshToken;
 import com.example.demo.entities.User;
 import com.example.demo.exception.ResourceNotFoundException;
@@ -36,24 +35,28 @@ public class UserServiceImpl implements UserService {
      */
     @SneakyThrows
     @Override
-    public UserSignInResponse signUp(UserRequestDTO userDto) {
+    public String signUp(UserRequestDTO userDto) {
         Optional<User> existingUser = userRepository.findByUsername(userDto.getUsername());
         if (existingUser.isPresent()) {
-            throw new ResourceNotFoundException("UserName already exist");
+            //UserName already exist
+            throw new ResourceNotFoundException("1");
         } else if (userDto.getUsername().toLowerCase().contains("admin")){
-            throw new ResourceNotFoundException("Can't create username with characters like admin");
+            //Can't create username with characters like admin
+            throw new ResourceNotFoundException("2");
         } else if (userDto.getPassword().length() < 8){
-            throw new ResourceNotFoundException("Password must be at least 8 characters");
+            //Password must be at least 8 characters
+            throw new ResourceNotFoundException("3");
         } else if (userDto.getNickname().toLowerCase().contains("admin")){
-            throw new ResourceNotFoundException("Can't create nickname with characters like admin");
+            //Can't create nickname with characters like admin
+            throw new ResourceNotFoundException("4");
         } else if (userRepository.findByEmail(userDto.getEmail()).isPresent()){
-            throw new ResourceNotFoundException("Email already exist");
+           //Email already exist
+            throw new ResourceNotFoundException("5");
         }
 
         String password = userDto.getPassword();
         HashedPassword hashedPassword = PasswordUtil.hashAndSaltPassword(password);
         String user_id = UUID.GenerateUUID();
-
         User newUser = User.builder()
                 .userId(user_id)
                 .username(userDto.getUsername())
@@ -64,9 +67,7 @@ public class UserServiceImpl implements UserService {
                 .createdAt(new java.sql.Timestamp(System.currentTimeMillis()))
                 .build();
         userRepository.save(newUser);
-
-        UserSignInResponse UserSignInResponse = new UserSignInResponse(newUser.getUserId(), newUser.getUsername(), newUser.getEmail(), password, newUser.getNickname(), newUser.getRegionCountry());
-        return UserSignInResponse;
+        return "true";
     }
 
     /**
