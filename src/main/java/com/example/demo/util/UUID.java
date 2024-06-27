@@ -1,8 +1,8 @@
 package com.example.demo.util;
 
 public class UUID {
-public static String GenerateUUID() {
-    String UUID = java.util.UUID.randomUUID().toString();
+    public static java.util.UUID GenerateUUID() {
+        java.util.UUID UUID = java.util.UUID.randomUUID();
         return UUID;
     }
 }

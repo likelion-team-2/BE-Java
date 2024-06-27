@@ -19,8 +19,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.dto.request.UserRequestDTO;
 
-import java.util.UUID;
-
 @RestController
 @RequestMapping("/v1/api/user")
 @Validated

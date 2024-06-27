@@ -50,15 +50,15 @@ public class UserServiceImpl implements UserService {
             //Can't create nickname with characters like admin
             throw new ResourceNotFoundException("4");
         } else if (userRepository.findByEmail(userDto.getEmail()).isPresent()){
-           //Email already exist
+            //Email already exist
             throw new ResourceNotFoundException("5");
         }
 
         String password = userDto.getPassword();
         HashedPassword hashedPassword = PasswordUtil.hashAndSaltPassword(password);
-        String user_id = UUID.GenerateUUID();
+        java.util.UUID user_id = UUID.GenerateUUID();
         User newUser = User.builder()
-                .userId(user_id)
+                .id(user_id)
                 .username(userDto.getUsername())
                 .password(hashedPassword.getHashedPassword())
                 .email(userDto.getEmail())
