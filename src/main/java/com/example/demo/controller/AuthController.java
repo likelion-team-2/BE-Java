@@ -8,7 +8,6 @@ import com.example.demo.entities.RefreshToken;
 import com.example.demo.entities.User;
 import com.example.demo.service.impl.RefreshTokenServiceImpl;
 import com.example.demo.service.impl.UserServiceImpl;
-import com.example.demo.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -36,7 +35,6 @@ public class AuthController {
 
     private final UserServiceImpl userService;
     private final RefreshTokenServiceImpl refreshTokenService;
-    private final JwtUtil jwtUtil;
 
     @Operation(summary = "Sign in user", description = "Sign in user to the system",  responses = {
             @ApiResponse(responseCode = "200", description = "User signed in",
@@ -63,15 +61,10 @@ public class AuthController {
                             ))),})
     @PostMapping("/refreshtoken")
     public ResponseData<TokenRefreshResponse> refreshtoken(@Valid @RequestBody TokenRefreshRequestDTO request) {
-        String requestRefreshToken = request.getRefreshToken();
+        String refreshToken = request.getRefreshToken();
+        String newAccessToken = refreshTokenService.generateAccessTokenFromRefreshToken(refreshToken);
 
-        User user = refreshTokenService.findByToken(requestRefreshToken)
-                .map(refreshTokenService::verifyExpiration)
-                .map(RefreshToken::getUser)
-                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
-                        "Refresh token is invalid!"));
-        String accessToken = jwtUtil.generateAccessTokenFromUsername(user.getUsername());
         return new ResponseData<>(HttpStatus.OK.value(), "Get refresh token successfully.",
-                new TokenRefreshResponse(accessToken, requestRefreshToken));
+                new TokenRefreshResponse(newAccessToken, refreshToken));
     }
 }

@@ -1,6 +1,8 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.config.UserAuthProvider;
 import com.example.demo.entities.RefreshToken;
+import com.example.demo.entities.User;
 import com.example.demo.exception.TokenRefreshException;
 import com.example.demo.repositories.RefreshTokenRepository;
 import com.example.demo.repositories.UserRepository;
@@ -19,55 +21,19 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
-    @Value("${webchat.security.jwtRefreshExpirationMs}")
-    private Long refreshTokenDurationMs;
-
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository;
+   private final UserAuthProvider userAuthProvider;
 
     /**
      * ${inheritDoc}
      */
     @Override
-    public Optional<RefreshToken> findByToken(String token) {
-        return refreshTokenRepository.findByToken(token);
-    }
-
-    /**
-     * ${inheritDoc}
-     */
-    @Override
-    public RefreshToken createRefreshToken(UUID userId) {
-        RefreshToken refreshToken = new RefreshToken();
-
-        refreshToken.setUser(userRepository.findById(userId).get());
-        refreshToken.setExpiredAt(Instant.now().plusMillis(refreshTokenDurationMs));
-        refreshToken.setCreatedAt(LocalDateTime.now());
-        refreshToken.setToken(UUID.randomUUID().toString());
-
-        refreshToken = refreshTokenRepository.save(refreshToken);
-        return refreshToken;
-    }
-
-    /**
-     * ${inheritDoc}
-     */
-    @Override
-    public RefreshToken verifyExpiration(RefreshToken token) {
-        if (token.getExpiredAt().compareTo(Instant.now()) < 0) {
-            refreshTokenRepository.delete(token);
-            throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new signin request");
+    public String generateAccessTokenFromRefreshToken(String refreshToken) {
+        Optional<User> userOpt = userAuthProvider.getUserFromRefreshToken(refreshToken);
+        if (userOpt.isEmpty()) {
+            throw new TokenRefreshException(refreshToken, "Invalid refresh token");
         }
 
-        return token;
-    }
-
-    /**
-     * ${inheritDoc}
-     */
-    @Override
-    @Transactional
-    public int deleteByUserId(UUID userId) {
-        return refreshTokenRepository.deleteByUser(userRepository.findById(userId).get());
+        User user = userOpt.get();
+        return userAuthProvider.createAccessToken(user.getUsername());
     }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.config.UserAuthProvider;
 import com.example.demo.dto.request.UserRequestDTO;
 import com.example.demo.dto.request.UserRequestSignInDTO;
 import com.example.demo.dto.response.UserAuthResponse;
@@ -9,7 +10,6 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repositories.UserRepository;
 import com.example.demo.service.UserService;
 import com.example.demo.util.HashedPassword;
-import com.example.demo.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ import com.example.demo.util.PasswordUtil;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
+    private final UserAuthProvider userAuthProvider;
     private final RefreshTokenServiceImpl refreshTokenService;
 
     /**
@@ -76,23 +76,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserAuthResponse signIn(UserRequestSignInDTO userRequestDto) throws NoSuchAlgorithmException, InvalidKeySpecException {
         String usernameOrEmail = userRequestDto.getUsernameOrEmail();
-        Optional<User> user = userRepository.findByUsername(usernameOrEmail);
-        if (user.isEmpty()) {
-            user = userRepository.findByEmail(usernameOrEmail);
-            if (user.isEmpty()) {
+        Optional<User> userOpt = userRepository.findByUsername(usernameOrEmail);
+
+        if (userOpt.isEmpty()) {
+            userOpt = userRepository.findByEmail(usernameOrEmail);
+            if (userOpt.isEmpty()) {
                 throw new ResourceNotFoundException("User Not Found");
             }
-            User userFounded = user.get();
-
-            if (PasswordUtil.verifyPassword(userRequestDto.getPassword(), userFounded.getPassword())) {
-                String accessToken = jwtUtil.generateAccessTokenFromUsername(userFounded.getUsername());
-                RefreshToken refreshToken = refreshTokenService.createRefreshToken(userFounded.getId());
-                return new UserAuthResponse(accessToken, refreshToken.getToken(), userFounded.getId(),
-                        userFounded.getUsername(), userFounded.getEmail(), userFounded.getNickname(),
-                        userFounded.getRegionCountry());
-            }
-            throw new ResourceNotFoundException("Invalid password");
         }
-        throw new ResourceNotFoundException("User Not Found");
+
+        User userFounded = userOpt.get();
+        if (PasswordUtil.verifyPassword(userRequestDto.getPassword(), userFounded.getPassword())) {
+            String accessToken = userAuthProvider.createAccessToken(userFounded.getUsername());
+            String refreshToken = userAuthProvider.createRefreshToken(userFounded.getId());
+            return new UserAuthResponse(accessToken, refreshToken, userFounded.getId(),
+                    userFounded.getUsername(), userFounded.getEmail(), userFounded.getNickname(),
+                    userFounded.getRegionCountry());
+        }
+        throw new ResourceNotFoundException("Invalid password");
     }
 }

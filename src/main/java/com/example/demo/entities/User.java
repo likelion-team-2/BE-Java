@@ -24,11 +24,7 @@ public class User {
 
     @Id
     @Column(nullable = false, unique = true)
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
-
-//    @Column(nullable = false, unique = true)
-//    private String userId;
 
     @Column(nullable = false, unique = true)
     private String email;
