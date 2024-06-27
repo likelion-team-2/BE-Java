@@ -19,15 +19,16 @@ import java.util.UUID;
 @Builder
 @Entity
 @Data
-@Table(name = "user")
+@Table(name = "\"user\"")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, unique = true)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
-    private String userId;
+//    @Column(nullable = false, unique = true)
+//    private String userId;
 
     @Column(nullable = false, unique = true)
     private String email;
