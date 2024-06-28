@@ -34,7 +34,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "User created",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             examples = @ExampleObject(name = "ex name", summary = "ex summary",
-                            value = "{\"status\": 200, \"message\": \"User created\", \"data\": \"user_id\"}"
+                            value = "{\"status\": 200, \"message\": \"User created\", \"data\": \"true\"}"
                             ))),})
     @PostMapping("/signup")
     public ResponseEntity<ResponseData<String>> signUp(@Valid @RequestBody UserRequestDTO userDTO) {
