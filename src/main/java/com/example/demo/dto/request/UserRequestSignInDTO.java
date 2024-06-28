@@ -1,30 +1,19 @@
 package com.example.demo.dto.request;
 
-import com.example.demo.util.PhoneNumber;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserRequestSignInDTO implements Serializable {
-    @Email(message = "Email should be valid")
-    private String email;
+    @NotBlank(message = "Username or email is required")
+    private String usernameOrEmail;
 
     @NotBlank(message = "Password is required")
     private String password;
-
-    public UserRequestSignInDTO(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
 }
