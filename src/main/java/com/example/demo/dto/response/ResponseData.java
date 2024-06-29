@@ -1,5 +1,8 @@
 package com.example.demo.dto.response;
 
+import lombok.Builder;
+
+@Builder
 public class ResponseData <T>{
     private int status;
     private String message;

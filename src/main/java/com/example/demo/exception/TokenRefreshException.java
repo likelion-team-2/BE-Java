@@ -3,11 +3,17 @@ package com.example.demo.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.FORBIDDEN)
+@ResponseStatus(HttpStatus.UNAUTHORIZED)
 public class TokenRefreshException extends RuntimeException{
     private static final long serialVersionUID = 1L;
 
-    public TokenRefreshException(String token, String message) {
-        super(String.format("Failed for [%s]: %s", token, message));
+    private int status;
+    private String message;
+    private String data;
+
+    public TokenRefreshException(int status, String message, String data) {
+        this.status = status;
+        this.message = message;
+        this.data = data;
     }
 }

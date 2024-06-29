@@ -1,11 +1,5 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.response.TokenRefreshResponse;
-import com.example.demo.entities.RefreshToken;
-
-import java.util.Optional;
-import java.util.UUID;
-
 public interface RefreshTokenService {
 
     /**
