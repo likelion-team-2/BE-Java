@@ -10,6 +10,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -94,19 +95,22 @@ public class UserAuthProvider {
      */
     public Optional<User> getUserFromRefreshToken(String token) {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secretKey)).build();
-        DecodedJWT decoded = verifier.verify(token);
+        try {
+            DecodedJWT decoded = verifier.verify(token);
+            // Throw exception if token is expired
+            Date now = new Date();
+            if (decoded.getExpiresAt().before(now)) {
+                throw new TokenRefreshException(HttpStatus.UNAUTHORIZED.value(), "Refresh token was expired", "2");
+            }
+            // Throw exception if token is invalid
+            if (ObjectUtils.isEmpty(decoded.getIssuer())) {
+                throw new TokenRefreshException(HttpStatus.UNAUTHORIZED.value(), "Invalid refresh token", "1");
+            }
 
-        // Throw exception if token is expired
-        Date now = new Date();
-        if (decoded.getExpiresAt().before(now)) {
-            throw new TokenRefreshException(token, "Refresh token expired");
+            Optional<User> user = userRepository.findById(UUID.fromString(decoded.getIssuer()));
+            return user;
+        } catch (Exception e) {
+            throw new TokenRefreshException(HttpStatus.UNAUTHORIZED.value(), "Invalid refresh token", "1");
         }
-        // Throw exception if token is invalid
-        if (ObjectUtils.isEmpty(decoded.getIssuer())) {
-            throw new TokenRefreshException(token, "Invalid refresh token");
-        }
-
-        Optional<User> user = userRepository.findById(UUID.fromString(decoded.getIssuer()));
-        return user;
     }
 }

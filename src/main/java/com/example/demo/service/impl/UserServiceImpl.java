@@ -4,7 +4,7 @@ import com.example.demo.config.UserAuthProvider;
 import com.example.demo.dto.request.UserRequestDTO;
 import com.example.demo.dto.request.UserRequestSignInDTO;
 import com.example.demo.dto.response.UserAuthResponse;
-import com.example.demo.entities.RefreshToken;
+import com.example.demo.dto.response.UserSignInResponse;
 import com.example.demo.entities.User;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repositories.UserRepository;
@@ -12,6 +12,7 @@ import com.example.demo.service.UserService;
 import com.example.demo.util.HashedPassword;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
@@ -28,7 +29,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserAuthProvider userAuthProvider;
-    private final RefreshTokenServiceImpl refreshTokenService;
 
     /**
      * {@inheritDoc}
@@ -39,31 +39,34 @@ public class UserServiceImpl implements UserService {
         Optional<User> existingUser = userRepository.findByUsername(userDto.getUsername());
         if (existingUser.isPresent()) {
             //UserName already exist
-            throw new ResourceNotFoundException("1");
+            throw new ResourceNotFoundException(HttpStatus.CONFLICT.value(), "UserName already exist", "1");
         } else if (userDto.getUsername().toLowerCase().contains("admin")){
             //Can't create username with characters like admin
-            throw new ResourceNotFoundException("2");
+            throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
+                    "Can't create username with characters like admin", "2");
         } else if (userDto.getPassword().length() < 8){
             //Password must be at least 8 characters
-            throw new ResourceNotFoundException("3");
+            throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
+                    "Password must be at least 8 characters", "3");
         } else if (userDto.getNickname().toLowerCase().contains("admin")){
             //Can't create nickname with characters like admin
-            throw new ResourceNotFoundException("4");
+            throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
+                    "Can't create nickname with characters like admin", "4");
         } else if (userRepository.findByEmail(userDto.getEmail()).isPresent()){
             //Email already exist
-            throw new ResourceNotFoundException("5");
+            throw new ResourceNotFoundException(HttpStatus.CONFLICT.value(), "Email already exist", "5");
         }
 
         String password = userDto.getPassword();
         HashedPassword hashedPassword = PasswordUtil.hashAndSaltPassword(password);
-        java.util.UUID user_id = UUID.GenerateUUID();
+        java.util.UUID userId = UUID.GenerateUUID();
         User newUser = User.builder()
-                .id(user_id)
+                .id(userId)
                 .username(userDto.getUsername())
                 .password(hashedPassword.getHashedPassword())
                 .email(userDto.getEmail())
                 .nickname(userDto.getNickname())
-                .regionCountry(userDto.getRegion_country())
+                .regionCountry(userDto.getRegionCountry())
                 .createdAt(new java.sql.Timestamp(System.currentTimeMillis()))
                 .build();
         userRepository.save(newUser);
@@ -81,7 +84,7 @@ public class UserServiceImpl implements UserService {
         if (userOpt.isEmpty()) {
             userOpt = userRepository.findByEmail(usernameOrEmail);
             if (userOpt.isEmpty()) {
-                throw new ResourceNotFoundException("User Not Found");
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "User Not Found", "1");
             }
         }
 
@@ -89,10 +92,10 @@ public class UserServiceImpl implements UserService {
         if (PasswordUtil.verifyPassword(userRequestDto.getPassword(), userFounded.getPassword())) {
             String accessToken = userAuthProvider.createAccessToken(userFounded.getUsername());
             String refreshToken = userAuthProvider.createRefreshToken(userFounded.getId());
-            return new UserAuthResponse(accessToken, refreshToken, userFounded.getId(),
+            return new UserAuthResponse(accessToken, refreshToken, new UserSignInResponse(userFounded.getId(),
                     userFounded.getUsername(), userFounded.getEmail(), userFounded.getNickname(),
-                    userFounded.getRegionCountry());
+                    userFounded.getRegionCountry()));
         }
-        throw new ResourceNotFoundException("Invalid password");
+        throw new ResourceNotFoundException(HttpStatus.UNAUTHORIZED.value(), "Invalid password", "2");
     }
 }

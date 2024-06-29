@@ -29,25 +29,5 @@ public class UserController {
 
     private final UserServiceImpl userService;
 
-    // TODO: Move to AuthController
-    @Operation(summary = "Add a new user", description = "Add a new user to the system",  responses = {
-            @ApiResponse(responseCode = "200", description = "User created",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            examples = @ExampleObject(name = "ex name", summary = "ex summary",
-                            value = "{\"status\": 200, \"message\": \"User created\", \"data\": \"true\"}"
-                            ))),})
-    @PostMapping("/signup")
-    public ResponseEntity<ResponseData<String>> signUp(@Valid @RequestBody UserRequestDTO userDTO) {
-        System.out.println("Received user signup request: " + Json.pretty(userDTO));
-        try {
-            // Logic to create user
-            String data = userService.signUp(userDTO);
-            ResponseData<String> responseData = new ResponseData<>(HttpStatus.OK.value(), "User created", data);
-            return ResponseEntity.ok(responseData);
-        } catch (Exception e) {
-            // Return error response
-            ResponseError responseError = new ResponseError(HttpStatus.CONFLICT.value(), e.getMessage(), null);
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(responseError);
-        }
-    }
+
 }

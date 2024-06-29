@@ -11,7 +11,6 @@ import java.util.Date;
 
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -20,9 +19,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(Exception e, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setTimestamp(new Date());
+        ErrorResponseInfo errorResponseInfo = new ErrorResponseInfo();
+
+        errorResponseInfo.setTimestamp(new Date());
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-        errorResponse.setPath(request.getDescription(false).replace("uri=", ""));
+        errorResponseInfo.setPath(request.getDescription(false).replace("uri=", ""));
 
         String message = e.getMessage();
         if (e instanceof MethodArgumentNotValidException) {
@@ -30,12 +31,14 @@ public class GlobalExceptionHandler {
             int end = message.lastIndexOf("]");
             message = message.substring(start + 1, end - 1);
             errorResponse.setMessage(message);
-            errorResponse.setError("Payload Invalid");
+            errorResponseInfo.setError("Payload Invalid");
         } else if (e instanceof ConstraintViolationException) {
             message = message.substring(message.indexOf(" ") + 1);
-            errorResponse.setError("PathVariable Invalid");
+            errorResponseInfo.setError("PathVariable Invalid");
         }
         errorResponse.setMessage(message);
+        errorResponse.setAdditionalInfo(errorResponseInfo);
+
         return errorResponse;
     }
 
@@ -44,13 +47,15 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e, WebRequest request) {
         System.out.println("=======================> INTERNAL_SERVER_ERROR <=======================");
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setTimestamp(new Date());
+        ErrorResponseInfo errorResponseInfo = new ErrorResponseInfo();
+        errorResponseInfo.setTimestamp(new Date());
         errorResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        errorResponse.setPath(request.getDescription(false).replace("uri=", ""));
-        errorResponse.setError("Internal Server Error");
+        errorResponseInfo.setPath(request.getDescription(false).replace("uri=", ""));
+        errorResponseInfo.setError("Internal Server Error");
         if (e instanceof MethodArgumentTypeMismatchException) {
                     errorResponse.setMessage("Failed to convert value of type 'java.lang.String' to required type");
         }
+        errorResponse.setAdditionalInfo(errorResponseInfo);
         return errorResponse;
     }
 
@@ -58,9 +63,10 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleResponseStatusException(ResponseStatusException e, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setTimestamp(new Date());
+        ErrorResponseInfo errorResponseInfo = new ErrorResponseInfo();
+        errorResponseInfo.setTimestamp(new Date());
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-        errorResponse.setPath(request.getDescription(false).replace("uri=", ""));
+        errorResponseInfo.setPath(request.getDescription(false).replace("uri=", ""));
 
         String message = e.getMessage();
         int start = message.indexOf("\"");
@@ -69,7 +75,8 @@ public class GlobalExceptionHandler {
             message = message.substring(start + 1, end);
         }
         errorResponse.setMessage(message);
-        errorResponse.setError("ResponseStatusException occurred");
+        errorResponseInfo.setError("ResponseStatusException occurred");
+        errorResponse.setAdditionalInfo(errorResponseInfo);
         return errorResponse;
     }
 

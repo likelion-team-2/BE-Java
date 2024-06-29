@@ -22,14 +22,14 @@ public class UserRequestDTO implements Serializable {
     private String nickname;
 
     @NotNull(message = "Region Country not be null")
-    private String region_country;
+    private String regionCountry;
 
-    public UserRequestDTO( String username, String password, String email, String nickname, String region_country) {
+    public UserRequestDTO( String username, String password, String email, String nickname, String regionCountry) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.nickname = nickname;
-        this.region_country = region_country;
+        this.regionCountry = regionCountry;
 
     }
 
@@ -49,8 +49,8 @@ public class UserRequestDTO implements Serializable {
         return nickname;
     }
 
-    public @NotNull(message = "Region Country not be null") String getRegion_country() {
-        return region_country;
+    public @NotNull(message = "Region Country not be null") String getRegionCountry() {
+        return regionCountry;
     }
 
 }

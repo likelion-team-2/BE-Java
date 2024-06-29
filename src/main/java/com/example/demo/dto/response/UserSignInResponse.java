@@ -3,13 +3,14 @@ package com.example.demo.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 public class UserSignInResponse {
-    private String userId;
+    private UUID userId;
     private String username;
     private String email;
-    private String password;
     private String nickname;
-    private String region_country;
+    private String regionCountry;
 }
