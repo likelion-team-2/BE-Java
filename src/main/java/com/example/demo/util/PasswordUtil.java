@@ -66,6 +66,10 @@ public class PasswordUtil {
         return newHash.equals(storedHash);
     }
 
+    public static boolean isPasswordMatch(String oldPassword, String newPassword) {
+        return oldPassword.equals(newPassword);
+    }
+
 //    public static void main(String[] args) {
 //        try {
 //            String password = "mySecurePassword";

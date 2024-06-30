@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.request.ChangePasswordRequestDTO;
 import com.example.demo.dto.request.UserRequestDTO;
 import com.example.demo.dto.request.UserRequestSignInDTO;
 import com.example.demo.dto.response.UserAuthResponse;
@@ -24,4 +25,9 @@ public interface UserService {
      */
     UserAuthResponse signIn(UserRequestSignInDTO userRequestSignInDTO) throws NoSuchAlgorithmException, InvalidKeySpecException;
 
+    /**
+     * Service for handle user login
+     * @param changePasswordRequestDTO
+     */
+    void changePassword(ChangePasswordRequestDTO changePasswordRequestDTO) throws NoSuchAlgorithmException, InvalidKeySpecException;
 }
