@@ -58,7 +58,7 @@ public class UserController {
                             )))
     })
     @PatchMapping("/changepassword")
-    public ResponseEntity<ResponseData<String>> changePassword(
+    public ResponseEntity<ResponseData<String>> changePassword (
             @Valid @RequestBody ChangePasswordRequestDTO changePasswordRequest,
             String email) throws NoSuchAlgorithmException, InvalidKeySpecException {
         userService.changePassword(changePasswordRequest);
