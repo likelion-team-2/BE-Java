@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.Set;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -19,7 +21,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Data
-@Table(name = "\"user\"")
+@Table(name = "users")
 public class User {
 
     @Id
@@ -47,5 +49,7 @@ public class User {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
+    @ManyToMany(mappedBy = "users")
+    private Set<Session> sessions;
 }
 
