@@ -57,7 +57,7 @@ public class UserController {
                                     value = "{status: 409, message: \"Old password and new password can't be the same\", data: \"4\" }<br />"
                             )))
     })
-    @PutMapping
+    @PatchMapping("/changepassword")
     public ResponseEntity<ResponseData<String>> changePassword(
             @Valid @RequestBody ChangePasswordRequestDTO changePasswordRequest,
             String email) throws NoSuchAlgorithmException, InvalidKeySpecException {
