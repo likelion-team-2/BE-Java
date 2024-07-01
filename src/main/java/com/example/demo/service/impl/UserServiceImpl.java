@@ -2,8 +2,10 @@ package com.example.demo.service.impl;
 
 import com.example.demo.config.UserAuthProvider;
 import com.example.demo.dto.request.ChangePasswordRequestDTO;
+import com.example.demo.dto.request.UserRequesUserNameDTO;
 import com.example.demo.dto.request.UserRequestDTO;
 import com.example.demo.dto.request.UserRequestSignInDTO;
+import com.example.demo.dto.response.ResponseGetUser;
 import com.example.demo.dto.response.UserAuthResponse;
 import com.example.demo.dto.response.UserSignInResponse;
 import com.example.demo.entities.User;
@@ -100,6 +102,10 @@ public class UserServiceImpl implements UserService {
         throw new ResourceNotFoundException(HttpStatus.UNAUTHORIZED.value(), "Invalid password", "2");
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     @Override
     public void changePassword(ChangePasswordRequestDTO changePasswordRequestDTO)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -125,5 +131,23 @@ public class UserServiceImpl implements UserService {
         HashedPassword hashedPassword = PasswordUtil.hashAndSaltPassword(changePasswordRequestDTO.getNewPassword());
         userDB.setPassword(hashedPassword.getHashedPassword());
         userRepository.save(userDB);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+
+    @Override
+    public ResponseGetUser getUser(UserRequesUserNameDTO userRequesUserNameDTO) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        String usernameOrNickname = userRequesUserNameDTO.getUsernameOrNickname();
+        Optional<User> getUser = userRepository.findByUsername(usernameOrNickname);
+        if (getUser.isEmpty()) {
+            getUser = userRepository.findByNickname(usernameOrNickname);
+            if (getUser.isEmpty()) {
+                throw new ResourceNotFoundException(HttpStatus.NOT_FOUND.value(), "User Not Found", "1");
+            }
+        }
+        User userFounded = getUser.get();
+        return new ResponseGetUser(userFounded.getUsername(), userFounded.getNickname());
     }
 }

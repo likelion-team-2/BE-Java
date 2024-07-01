@@ -1,8 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.ChangePasswordRequestDTO;
+import com.example.demo.dto.request.UserRequesUserNameDTO;
 import com.example.demo.dto.response.ResponseData;
 import com.example.demo.dto.response.ResponseError;
+import com.example.demo.dto.response.ResponseGetUser;
+import com.example.demo.entities.User;
 import com.example.demo.service.impl.UserServiceImpl;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,5 +66,14 @@ public class UserController {
             String email) throws NoSuchAlgorithmException, InvalidKeySpecException {
         userService.changePassword(changePasswordRequest);
         return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Password changed successfully", "true"));
+    }
+
+    @GetMapping("/getuser")
+    public ResponseData<ResponseGetUser> getUser(@Valid @RequestBody UserRequesUserNameDTO userRequesUserNameDTO)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
+
+
+        ResponseGetUser responseGetUser = userService.getUser(userRequesUserNameDTO);
+        return new ResponseData<>(HttpStatus.OK.value(), "User found", responseGetUser);
     }
 }
