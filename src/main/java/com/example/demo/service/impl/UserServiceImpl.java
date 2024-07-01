@@ -2,7 +2,6 @@ package com.example.demo.service.impl;
 
 import com.example.demo.config.UserAuthProvider;
 import com.example.demo.dto.request.ChangePasswordRequestDTO;
-import com.example.demo.dto.request.UserRequesUserNameDTO;
 import com.example.demo.dto.request.UserRequestDTO;
 import com.example.demo.dto.request.UserRequestSignInDTO;
 import com.example.demo.dto.response.ResponseGetUser;
@@ -138,8 +137,7 @@ public class UserServiceImpl implements UserService {
      */
 
     @Override
-    public ResponseGetUser getUser(UserRequesUserNameDTO userRequesUserNameDTO) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        String usernameOrNickname = userRequesUserNameDTO.getUsernameOrNickname();
+    public ResponseGetUser getUser(String usernameOrNickname) throws NoSuchAlgorithmException, InvalidKeySpecException {
         Optional<User> getUser = userRepository.findByUsername(usernameOrNickname);
         if (getUser.isEmpty()) {
             getUser = userRepository.findByNickname(usernameOrNickname);

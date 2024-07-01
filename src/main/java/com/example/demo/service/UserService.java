@@ -1,12 +1,10 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.request.ChangePasswordRequestDTO;
-import com.example.demo.dto.request.UserRequesUserNameDTO;
 import com.example.demo.dto.request.UserRequestDTO;
 import com.example.demo.dto.request.UserRequestSignInDTO;
 import com.example.demo.dto.response.ResponseGetUser;
 import com.example.demo.dto.response.UserAuthResponse;
-import com.example.demo.entities.User;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -39,5 +37,5 @@ public interface UserService {
      * @param userRequesUserNameDTO
      * @return  User
      */
-    ResponseGetUser getUser(UserRequesUserNameDTO userRequesUserNameDTO) throws NoSuchAlgorithmException, InvalidKeySpecException;
+    ResponseGetUser getUser(String userRequesUserNameDTO) throws NoSuchAlgorithmException, InvalidKeySpecException;
 }

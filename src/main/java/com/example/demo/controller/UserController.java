@@ -1,13 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.ChangePasswordRequestDTO;
-import com.example.demo.dto.request.UserRequesUserNameDTO;
 import com.example.demo.dto.response.ResponseData;
-import com.example.demo.dto.response.ResponseError;
 import com.example.demo.dto.response.ResponseGetUser;
-import com.example.demo.entities.User;
 import com.example.demo.service.impl.UserServiceImpl;
-import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -21,7 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import com.example.demo.dto.request.UserRequestDTO;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -68,12 +63,24 @@ public class UserController {
         return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Password changed successfully", "true"));
     }
 
+
+    @Operation(summary = "Get user", description = "Get the user's information", responses = {
+            @ApiResponse(responseCode = "200", description = "User found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(name = "user found", summary = "return user",
+                                    value = "{\"status\": 200, \"message\": \"User found\", \"data\": {\"username\": \"username\", \"nickname\": \"nickname\"}}"
+                            ))),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(name = "user not found", summary = "user not found",
+                                    value = "{status: 404, message: \"User not found\", data: \"1\"}"
+                            )))
+    })
     @GetMapping("/getuser")
-    public ResponseData<ResponseGetUser> getUser(@Valid @RequestBody UserRequesUserNameDTO userRequesUserNameDTO)
+    public ResponseData<ResponseGetUser> getUser(@Valid @RequestParam String usernameOrNickname)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
 
-
-        ResponseGetUser responseGetUser = userService.getUser(userRequesUserNameDTO);
+        ResponseGetUser responseGetUser = userService.getUser(usernameOrNickname);
         return new ResponseData<>(HttpStatus.OK.value(), "User found", responseGetUser);
     }
 }
