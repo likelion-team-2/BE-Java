@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.config.UserAuthProvider;
+import com.example.demo.dto.request.ChangePasswordRequestDTO;
 import com.example.demo.dto.request.UserRequestDTO;
 import com.example.demo.dto.request.UserRequestSignInDTO;
 import com.example.demo.dto.response.UserAuthResponse;
@@ -97,5 +98,32 @@ public class UserServiceImpl implements UserService {
                     userFounded.getRegionCountry()));
         }
         throw new ResourceNotFoundException(HttpStatus.UNAUTHORIZED.value(), "Invalid password", "2");
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequestDTO changePasswordRequestDTO)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
+        String email = changePasswordRequestDTO.getEmail();
+
+        User userDB = userRepository.findByEmail(email).get();
+
+        if (changePasswordRequestDTO.getOldPassword().length() < 8){
+            throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
+                    "Password must be at least 8 characters", "1");
+        } else if (changePasswordRequestDTO.getNewPassword().length() < 8){
+            throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
+                    "New password must be at least 8 characters", "2");
+        } else if (!PasswordUtil.verifyPassword(changePasswordRequestDTO.getOldPassword(),userDB.getPassword())){
+            throw new ResourceNotFoundException(HttpStatus.UNAUTHORIZED.value(),
+                    "Old password is incorrect","3");
+        } else if (PasswordUtil.isPasswordMatch(changePasswordRequestDTO.getOldPassword(),
+                changePasswordRequestDTO.getNewPassword())){
+            throw new ResourceNotFoundException(HttpStatus.CONFLICT.value(),
+                    "Old password and new password can't be the same","4");
+        }
+
+        HashedPassword hashedPassword = PasswordUtil.hashAndSaltPassword(changePasswordRequestDTO.getNewPassword());
+        userDB.setPassword(hashedPassword.getHashedPassword());
+        userRepository.save(userDB);
     }
 }
