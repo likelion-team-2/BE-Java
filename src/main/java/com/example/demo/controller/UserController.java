@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.ChangePasswordRequestDTO;
+import com.example.demo.dto.request.CreateSessionDTO;
 import com.example.demo.dto.response.ResponseData;
 import com.example.demo.dto.response.ResponseGetUser;
 import com.example.demo.service.impl.UserServiceImpl;
@@ -82,5 +83,13 @@ public class UserController {
 
         ResponseGetUser responseGetUser = userService.getUser(usernameOrNickname);
         return new ResponseData<>(HttpStatus.OK.value(), "User found", responseGetUser);
+    }
+
+    @PostMapping("/createsession")
+    public ResponseEntity<ResponseData<String>> createSession(@Valid @RequestBody CreateSessionDTO createSessionDTO) {
+        // Logic to create user
+        String data = userService.createSession(createSessionDTO);
+        ResponseData<String> responseData = new ResponseData<>(HttpStatus.OK.value(), "User created", data);
+        return ResponseEntity.ok(responseData);
     }
 }

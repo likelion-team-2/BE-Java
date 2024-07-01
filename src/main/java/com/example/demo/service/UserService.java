@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.request.ChangePasswordRequestDTO;
+import com.example.demo.dto.request.CreateSessionDTO;
 import com.example.demo.dto.request.UserRequestDTO;
 import com.example.demo.dto.request.UserRequestSignInDTO;
 import com.example.demo.dto.response.ResponseGetUser;
@@ -38,4 +39,6 @@ public interface UserService {
      * @return  User
      */
     ResponseGetUser getUser(String userRequesUserNameDTO) throws NoSuchAlgorithmException, InvalidKeySpecException;
+
+    String createSession(CreateSessionDTO createSessionDTO);
 }
