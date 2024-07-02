@@ -1,7 +1,7 @@
 ```markdown
-# Order App
+# Web Chat
 
-Order App is an application that allows users to place orders online.
+Web Chat is a simple chat application that allows users to send messages to each other in real-time.
 
 ## Quick Start
 
@@ -11,36 +11,18 @@ Order App is an application that allows users to place orders online.
 ## Clone project
 
 ```bash
-git clone https://github.com/MinhSang97/order_app.git
+git clone https://github.com/likelion-team-2/BE-Java.git
 ```
 
-## Move to oneship folder
+## Move to BE-Java folder
 
 ```bash
-cd order_app
+cd BE-Java
 ```
 ## Install container docker
 
 ```bash
 docker compose up -d
-```
-
-## Install dependencies
-
-```bash
-go mod tidy
-```
-
-## DB Migration
-
-```bash
-make migrate-up
-```
-
-## Run project
-
-```bash
-go run ./cmd/main.go
 ```
 
 ## LICENSE
