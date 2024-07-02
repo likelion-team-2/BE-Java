@@ -1,10 +1,10 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.request.ChangePasswordRequestDTO;
+import com.example.demo.dto.request.CreateSessionDTO;
 import com.example.demo.dto.response.ResponseData;
-import com.example.demo.dto.response.ResponseError;
+import com.example.demo.dto.response.ResponseGetUser;
 import com.example.demo.service.impl.UserServiceImpl;
-import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -18,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import com.example.demo.dto.request.UserRequestDTO;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -63,5 +62,58 @@ public class UserController {
             String email) throws NoSuchAlgorithmException, InvalidKeySpecException {
         userService.changePassword(changePasswordRequest);
         return ResponseEntity.ok(new ResponseData<>(HttpStatus.OK.value(), "Password changed successfully", "true"));
+    }
+
+
+    @Operation(summary = "Get user", description = "Get the user's information", responses = {
+            @ApiResponse(responseCode = "200", description = "User found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(name = "user found", summary = "return user",
+                                    value = "{\"status\": 200, \"message\": \"User found\", \"data\": {\"username\": \"username\", \"nickname\": \"nickname\"}}"
+                            ))),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(name = "user not found", summary = "user not found",
+                                    value = "{status: 404, message: \"User not found\", data: \"1\"}"
+                            )))
+    })
+    @GetMapping("/getuser")
+    public ResponseData<ResponseGetUser> getUser(@Valid @RequestParam String usernameOrNickname)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
+
+        ResponseGetUser responseGetUser = userService.getUser(usernameOrNickname);
+        return new ResponseData<>(HttpStatus.OK.value(), "User found", responseGetUser);
+    }
+
+
+    @Operation(summary = "Create session", description = "Create a new session", responses = {
+            @ApiResponse(responseCode = "200", description = "Session created",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(name = "session created", summary = "true",
+                                    value = "{\"status\": 200, \"message\": \"Session created\", \"data\": \"true\"}"
+                            ))),
+            @ApiResponse(responseCode = "404", description = "User1 Not Found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(name = "User1 Not Found", summary = "User1 Not Found",
+                                    value = "{status: 404, message: \"User1 Not Found\", data: \"1\"}"
+                            ))),
+            @ApiResponse(responseCode = "404", description = "User2 Not Found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(name = "User2 Not Found", summary = "User2 Not Found",
+                                    value = "{status: 404, message: \"User2 Not Found\", data: \"1\"}"
+                            ))),
+            @ApiResponse(responseCode = "409", description = "Session already exist",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(name = "Session already exist", summary = "Session already exist",
+                                    value = "{status: 409, message: \"Session already exist\", data: \"1\"}"
+                            )))
+    })
+    @PostMapping("/createsession")
+    public ResponseEntity<ResponseData<String>> createSession(@Valid @RequestBody CreateSessionDTO createSessionDTO)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
+        // Logic to create session
+        String data = userService.createSession(createSessionDTO);
+        ResponseData<String> responseData = new ResponseData<>(HttpStatus.OK.value(), "Session created", data);
+        return ResponseEntity.ok(responseData);
     }
 }
