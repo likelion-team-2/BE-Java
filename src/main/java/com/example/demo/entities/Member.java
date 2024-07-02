@@ -6,22 +6,27 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
 @Data
-@Table(name = "\"user_session\"")
-public class UserSession {
+@Table(name = "members")
+public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "is_admin", columnDefinition = "boolean default false")
+    private boolean isAdmin = false;
+
     @OneToOne
-    @Column(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @Column
-    private Integer session_id;
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "members")
+    private Set<Group> groups;
 }

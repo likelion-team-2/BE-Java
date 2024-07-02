@@ -87,7 +87,7 @@ public class UserController {
 
     @PostMapping("/createsession")
     public ResponseEntity<ResponseData<String>> createSession(@Valid @RequestBody CreateSessionDTO createSessionDTO) {
-        // Logic to create user
+        // Logic to create session
         String data = userService.createSession(createSessionDTO);
         ResponseData<String> responseData = new ResponseData<>(HttpStatus.OK.value(), "User created", data);
         return ResponseEntity.ok(responseData);

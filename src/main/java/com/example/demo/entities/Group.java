@@ -22,20 +22,26 @@ import java.util.Set;
 @Builder
 @Entity
 @Data
-@Table(name = "sessions")
-public class Session {
+@Table(name = "groups")
+public class Group {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "group_name", nullable = false)
+    private String groupName;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
     @ManyToMany
     @JoinTable(
-            name = "session_users",
-            joinColumns = @JoinColumn(name = "session_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> users;
+            name = "group_members",
+            joinColumns = @JoinColumn(name = "group_id"),
+            inverseJoinColumns = @JoinColumn(name = "member_id"))
+    Set<Member> members;
 }
