@@ -188,7 +188,6 @@ public class UserServiceImpl implements UserService {
         }
 
         Session newSession = Session.builder()
-
                 .createdAt(LocalDateTime.now())
                 .build();
 
