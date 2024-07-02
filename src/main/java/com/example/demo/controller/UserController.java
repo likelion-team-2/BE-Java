@@ -85,11 +85,19 @@ public class UserController {
         return new ResponseData<>(HttpStatus.OK.value(), "User found", responseGetUser);
     }
 
+    @Operation (summary = "Create session", description = "Create a new session", responses = {
+            @ApiResponse(responseCode = "200", description = "User created",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(name = "user created", summary = "return session",
+                                    value = "{\"status\": 200, \"message\": \"User created\", \"data\": \"session\"}"
+                            )))
+    })
     @PostMapping("/createsession")
-    public ResponseEntity<ResponseData<String>> createSession(@Valid @RequestBody CreateSessionDTO createSessionDTO) {
+    public ResponseEntity<ResponseData<String>> createSession(@Valid @RequestBody CreateSessionDTO createSessionDTO)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
         // Logic to create session
         String data = userService.createSession(createSessionDTO);
-        ResponseData<String> responseData = new ResponseData<>(HttpStatus.OK.value(), "User created", data);
+        ResponseData<String> responseData = new ResponseData<>(HttpStatus.OK.value(), "Session created", data);
         return ResponseEntity.ok(responseData);
     }
 }

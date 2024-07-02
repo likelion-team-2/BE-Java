@@ -41,5 +41,5 @@ public interface UserService {
      */
     ResponseGetUser getUser(String userRequesUserNameDTO) throws NoSuchAlgorithmException, InvalidKeySpecException;
 
-    String createSession(CreateSessionDTO createSessionDTO);
+    String createSession(CreateSessionDTO createSessionDTO) throws NoSuchAlgorithmException, InvalidKeySpecException;
 }
