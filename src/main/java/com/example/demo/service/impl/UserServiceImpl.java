@@ -1,10 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.config.UserAuthProvider;
-import com.example.demo.dto.request.ChangePasswordRequestDTO;
-import com.example.demo.dto.request.CreateSessionDTO;
-import com.example.demo.dto.request.UserRequestDTO;
-import com.example.demo.dto.request.UserRequestSignInDTO;
+import com.example.demo.dto.request.*;
 import com.example.demo.dto.response.ResponseGetUser;
 import com.example.demo.dto.response.UserAuthResponse;
 import com.example.demo.dto.response.UserSignInResponse;
@@ -15,6 +12,7 @@ import com.example.demo.repositories.SessionRepository;
 import com.example.demo.repositories.SessionUsersRepository;
 import com.example.demo.repositories.UserRepository;
 import com.example.demo.service.UserService;
+import com.example.demo.util.GenerateOTP;
 import com.example.demo.util.HashedPassword;
 import jakarta.persistence.Column;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +41,7 @@ public class UserServiceImpl implements UserService {
     private final SessionRepository sessionRepository;
     private final SessionUsersRepository sessionUsersRepository;
     private final UserAuthProvider userAuthProvider;
+    private final GenerateOTP generateOTP;
 
     /**
      * {@inheritDoc}
@@ -197,6 +196,30 @@ public class UserServiceImpl implements UserService {
         newSession.setUsers(users);
         sessionRepository.save(newSession);
 
+        return "true";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String verifyOtpAndChangePassword(VerifyOTPAndChangePasswordRequestDTO verifyOTPAndChangePasswordRequestDTO)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
+        String email = verifyOTPAndChangePasswordRequestDTO.getEmail();
+        String otp = verifyOTPAndChangePasswordRequestDTO.getOtp();
+        String newPassword = verifyOTPAndChangePasswordRequestDTO.getNewPassword();
+
+        if (newPassword.length() < 8) {
+            throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
+                    "New password must be at least 8 characters", "1");
+        } else if (!generateOTP.isOtpValid(email, otp)) {
+            throw new ResourceNotFoundException(HttpStatus.BAD_REQUEST.value(),
+                    "OTP or Email is incorrect", "2");
+        }
+        User user = userRepository.findByEmail(email).get();
+        HashedPassword hashedPassword = PasswordUtil.hashAndSaltPassword(newPassword);
+        user.setPassword(hashedPassword.getHashedPassword());
+        userRepository.save(user);
         return "true";
     }
 }

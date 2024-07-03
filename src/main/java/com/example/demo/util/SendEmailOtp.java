@@ -19,15 +19,17 @@ public class SendEmailOtp {
 
     private JavaMailSender mailSender;
     private final Environment env;
+    private final GenerateOTP generateOTP;
 
     @Autowired
-    public SendEmailOtp(JavaMailSender mailSender, Environment env) {
+    public SendEmailOtp(JavaMailSender mailSender, Environment env, GenerateOTP generateOTP) {
         this.mailSender = mailSender;
         this.env = env;
+        this.generateOTP = generateOTP;
     }
 
     public int SendOtpEmail(String email) {
-        String otp = GenerateOTP.generateOTP();
+        String otp = generateOTP.generateOTP(email);
         MimeMessage mail = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mail, true);
@@ -37,6 +39,7 @@ public class SendEmailOtp {
                 helper.setFrom(fromEmail);
             }
             helper.setSubject("Your OTP for change forgotten password");
+
             ClassPathResource resource = new ClassPathResource("templates/otp_template.html");
             String content = new String(Files.readAllBytes(resource.getFile().toPath()));
             content = content.replace("${otp}", otp);

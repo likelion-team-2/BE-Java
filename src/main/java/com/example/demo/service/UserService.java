@@ -1,10 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.request.ChangePasswordRequestDTO;
+import com.example.demo.dto.request.*;
 
-import com.example.demo.dto.request.CreateSessionDTO;
-import com.example.demo.dto.request.UserRequestDTO;
-import com.example.demo.dto.request.UserRequestSignInDTO;
 import com.example.demo.dto.response.ResponseGetUser;
 import com.example.demo.dto.response.UserAuthResponse;
 
@@ -47,4 +44,11 @@ public interface UserService {
      * @return  String
      */
     String createSession(CreateSessionDTO createSessionDTO) throws NoSuchAlgorithmException, InvalidKeySpecException;
+
+    /**
+     * Service for handle user login
+     * @param verifyOTPAndChangePasswordRequestDTO
+     * @return  String
+     */
+    String verifyOtpAndChangePassword (VerifyOTPAndChangePasswordRequestDTO verifyOTPAndChangePasswordRequestDTO) throws NoSuchAlgorithmException, InvalidKeySpecException;
 }

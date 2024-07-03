@@ -13,6 +13,9 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import com.example.demo.util.SendEmailOtp;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 @Service
 @RequiredArgsConstructor
 public class OtpServiceImpl implements OtpService {
@@ -25,9 +28,6 @@ public class OtpServiceImpl implements OtpService {
     @Override
     public String generateOtp(SendOtpRequestDTO sendOtpRequestDTO) {
         int result = sendEmailOtp.SendOtpEmail(sendOtpRequestDTO.getEmail());
-//        if result = 0 {
-//            return "success";
-//        }
         if (result == 0) {
             return "success";
         } else {

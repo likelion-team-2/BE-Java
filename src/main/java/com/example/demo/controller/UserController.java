@@ -34,7 +34,6 @@ import java.security.spec.InvalidKeySpecException;
 public class UserController {
 
     private final UserServiceImpl userService;
-    private final OtpServiceImpl otpService;
 
     @Operation(summary = "Change password", description = "Change the user's password",  responses = {
             @ApiResponse(responseCode = "200", description = "Password changed in database",
@@ -118,15 +117,6 @@ public class UserController {
         // Logic to create session
         String data = userService.createSession(createSessionDTO);
         ResponseData<String> responseData = new ResponseData<>(HttpStatus.OK.value(), "Session created", data);
-        return ResponseEntity.ok(responseData);
-    }
-
-    @PostMapping("/sendotp")
-    public ResponseEntity<ResponseData<String>> sendOtp(@Valid @RequestBody SendOtpRequestDTO sendOtpRequestDTO)
-            throws NoSuchAlgorithmException, InvalidKeySpecException {
-        // Logic to send OTP
-        String otp = otpService.generateOtp(sendOtpRequestDTO);
-        ResponseData<String> responseData = new ResponseData<>(HttpStatus.OK.value(), "OTP sent", otp);
         return ResponseEntity.ok(responseData);
     }
 }
