@@ -140,6 +140,7 @@ public class UserServiceImpl implements UserService {
 
         HashedPassword hashedPassword = PasswordUtil.hashAndSaltPassword(changePasswordRequestDTO.getNewPassword());
         userDB.setPassword(hashedPassword.getHashedPassword());
+        userDB.setUpdatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
         userRepository.save(userDB);
     }
 
@@ -219,6 +220,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email).get();
         HashedPassword hashedPassword = PasswordUtil.hashAndSaltPassword(newPassword);
         user.setPassword(hashedPassword.getHashedPassword());
+        user.setUpdatedAt(new java.sql.Timestamp(System.currentTimeMillis());
         userRepository.save(user);
         return "true";
     }
