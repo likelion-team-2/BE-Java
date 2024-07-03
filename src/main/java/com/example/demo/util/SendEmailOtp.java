@@ -37,20 +37,6 @@ public class SendEmailOtp {
                 helper.setFrom(fromEmail);
             }
             helper.setSubject("Your OTP for change forgotten password");
-//            helper.setText("Your OTP is: " + otp, true);
-
-            // Read the template content
-//            //String content = new String(Files.readAllBytes(Paths.get(new ClassPathResource("otp_template.html").getURI(/src/main/java/com/example/demo/example/otp_template.html"))));
-//            String content = new String(Files.readAllBytes(Paths.get(new ClassPathResource("otp_template.html").getURI())));
-//            // Replace the placeholder with the actual OTP
-//            String pathToFile = "BE-Java\\src\\main\\java\\com\\example\\demo\\example\\otp_template.html";
-//            FileSystemResource resource = new FileSystemResource(pathToFile);
-//            String content = new String(Files.readAllBytes(resource.getFile().toPath()));
-//            content = content.replace("${otp}", otp);
-//            ClassPathResource resource = new ClassPathResource("./src/main/java/com/example/demo/example/otp_template.html");
-//            String content = new String(Files.readAllBytes(resource.getFile().toPath()));
-//            content = content.replace("${otp}", otp);
-            // Update the path to the template file
             ClassPathResource resource = new ClassPathResource("templates/otp_template.html");
             String content = new String(Files.readAllBytes(resource.getFile().toPath()));
             content = content.replace("${otp}", otp);
