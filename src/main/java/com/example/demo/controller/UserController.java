@@ -2,8 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.request.ChangePasswordRequestDTO;
 import com.example.demo.dto.request.CreateSessionDTO;
+import com.example.demo.dto.request.SendOtpRequestDTO;
 import com.example.demo.dto.response.ResponseData;
 import com.example.demo.dto.response.ResponseGetUser;
+import com.example.demo.service.OtpService;
 import com.example.demo.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import com.example.demo.service.impl.OtpServiceImpl;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -31,6 +34,7 @@ import java.security.spec.InvalidKeySpecException;
 public class UserController {
 
     private final UserServiceImpl userService;
+    private final OtpServiceImpl otpService;
 
     @Operation(summary = "Change password", description = "Change the user's password",  responses = {
             @ApiResponse(responseCode = "200", description = "Password changed in database",
@@ -114,6 +118,15 @@ public class UserController {
         // Logic to create session
         String data = userService.createSession(createSessionDTO);
         ResponseData<String> responseData = new ResponseData<>(HttpStatus.OK.value(), "Session created", data);
+        return ResponseEntity.ok(responseData);
+    }
+
+    @PostMapping("/sendotp")
+    public ResponseEntity<ResponseData<String>> sendOtp(@Valid @RequestBody SendOtpRequestDTO sendOtpRequestDTO)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
+        // Logic to send OTP
+        String otp = otpService.generateOtp(sendOtpRequestDTO);
+        ResponseData<String> responseData = new ResponseData<>(HttpStatus.OK.value(), "OTP sent", otp);
         return ResponseEntity.ok(responseData);
     }
 }
