@@ -18,7 +18,7 @@ services:
       - POSTGRES_DATA=/var/lib/postgresql/data/pgdata
   app:
     container_name: java_app
-    image: your-dockerhub-username/demo:latest
+    image: minhsang0997/demo:latest
     ports:
       - "8080:8080"
     depends_on:
