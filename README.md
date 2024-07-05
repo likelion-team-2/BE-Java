@@ -22,7 +22,7 @@ cd BE-Java
 ## Install container docker
 
 ```bash
-docker compose up -d
+docker compose up
 ```
 
 ## LICENSE
