@@ -33,14 +33,6 @@ mkdir "BE-Java"
 ```
 ## Copy file docker-compose.yml to BE-Java folder
 
-```bash
-cd BE-Java
-```
-
-```bash
-git checkout docker
-```
-
 ## Install container docker
 ```bash
 docker pull minhsang0997/demo:latest
