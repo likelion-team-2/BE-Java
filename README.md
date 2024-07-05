@@ -31,6 +31,7 @@ docker compose up -d
 ```bash
 mkdir "BE-Java"
 ```
+## Copy file docker-compose.yml to BE-Java folder
 
 ```bash
 cd BE-Java
