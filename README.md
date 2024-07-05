@@ -29,12 +29,17 @@ docker compose up -d
 
 ## For FE
 ```bash
-git clone https://github.com/likelion-team-2/BE-Java.git
+mkdir "BE-Java"
+```
+
+```bash
+cd BE-Java
 ```
 
 ```bash
 git checkout docker
 ```
+
 ## Install container docker
 ```bash
 docker pull minhsang0997/demo:latest
