@@ -220,7 +220,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(email).get();
         HashedPassword hashedPassword = PasswordUtil.hashAndSaltPassword(newPassword);
         user.setPassword(hashedPassword.getHashedPassword());
-        user.setUpdatedAt(new java.sql.Timestamp(System.currentTimeMillis());
+        user.setUpdatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
         userRepository.save(user);
         return "true";
     }
