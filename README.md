@@ -17,7 +17,7 @@ git clone https://github.com/likelion-team-2/BE-Java.git
 ## Move to BE-Java folder
 
 ```bash
-cd BE-Java
+cd BE-Java 
 ```
 ## Install container docker
 
