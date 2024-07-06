@@ -43,7 +43,8 @@ public class SecurityConfig {
                                         antMatcher("/favicon.ico"),
                                         antMatcher("/**/*.html"),
                                         antMatcher("/**/*.css"),
-                                        antMatcher("/**/*.js")).permitAll()
+                                        antMatcher("/**/*.js"),
+                                        antMatcher("/ws/**")).permitAll()
                                 .anyRequest().authenticated()
                 ).build();
     }
