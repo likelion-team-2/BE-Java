@@ -1,15 +1,17 @@
 package com.example.demo.dto.response;
 
-import com.example.demo.dto.request.ChatMessageRequestDto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class ChatMessageResponseDto {
+public class ChatMessageResponseDto implements Serializable {
+    private static final long serialVersionUID = 1L;
 
+    private String id;
     private String sender;
     private String recipient;
     private String content;

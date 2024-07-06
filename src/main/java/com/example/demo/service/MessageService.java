@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.request.ChatMessageRequestDto;
+import com.example.demo.dto.response.ChatMessageResponseDto;
 import com.example.demo.entities.Message;
+import com.example.demo.entities.Session;
 
 public interface MessageService {
     /**
@@ -10,4 +12,11 @@ public interface MessageService {
      * @return Message entity
      */
     Message saveChatMessage(ChatMessageRequestDto chatMessage);
+
+    /**
+     * Update chat message to redis
+     * @param chatMessageResponse
+     * @param session
+     */
+    void updateMessageToRedis(ChatMessageResponseDto chatMessageResponse, Session session);
 }
