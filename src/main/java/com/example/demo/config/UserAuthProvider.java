@@ -89,11 +89,11 @@ public class UserAuthProvider {
     }
 
     /**
-     * Get User from refresh token
+     * Get payload of JWT from token
      * @param token
      * @return
      */
-    public Optional<User> getUserFromRefreshToken(String token) {
+    private String getPayloadFromToken(String token) {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secretKey)).build();
         try {
             DecodedJWT decoded = verifier.verify(token);
@@ -107,10 +107,31 @@ public class UserAuthProvider {
                 throw new TokenRefreshException(HttpStatus.UNAUTHORIZED.value(), "Invalid refresh token", "1");
             }
 
-            Optional<User> user = userRepository.findById(UUID.fromString(decoded.getIssuer()));
-            return user;
+            return decoded.getIssuer();
         } catch (Exception e) {
             throw new TokenRefreshException(HttpStatus.UNAUTHORIZED.value(), "Invalid refresh token", "1");
         }
+    }
+
+    /**
+     * Get User from refresh token
+     * @param token
+     * @return
+     */
+    public Optional<User> getUserFromRefreshToken(String token) {
+        String userId = this.getPayloadFromToken(token);
+        Optional<User> user = userRepository.findById(UUID.fromString(userId));
+        return user;
+    }
+
+    /**
+     * Get User from access token
+     * @param accessToken
+     * @return
+     */
+    public Optional<User> getUserFromAccessToken(String accessToken) {
+        String username = this.getPayloadFromToken(accessToken);
+        Optional<User> user = userRepository.findByUsername(username);
+        return user;
     }
 }

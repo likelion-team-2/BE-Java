@@ -26,7 +26,12 @@ public class OpenApiConfig {
                            @Value("${open.api.licenseUrl}") String licenseUrl,
                            @Value("${open.api.serverUrl}") String serverUrl,
                            @Value("${open.api.serverName}") String serverName){
-        return new OpenAPI().info(new Info().title(title).version(version)
+        return new OpenAPI()
+                .addSecurityItem(new SecurityRequirement().
+                        addList("Bearer Authentication"))
+                .components(new Components().addSecuritySchemes
+                        ("Bearer Authentication", createAPIKeyScheme()))
+                .info(new Info().title(title).version(version)
                 .description(description)
                 .license(new License().name("Apache 2.0").url(licenseUrl)))
                 .servers(List.of(new Server().url(serverUrl).description(serverName)));
@@ -49,5 +54,11 @@ public class OpenApiConfig {
 
 //                .pathsToMatch("/v1/api/**")
                 .build();
+    }
+
+    private SecurityScheme createAPIKeyScheme() {
+        return new SecurityScheme().type(SecurityScheme.Type.HTTP)
+                .bearerFormat("JWT")
+                .scheme("bearer");
     }
 }
