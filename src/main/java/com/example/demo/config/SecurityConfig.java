@@ -32,7 +32,9 @@ public class SecurityConfig {
                         requests.requestMatchers(HttpMethod.POST,
                                         "/v1/api/auth/signin",
                                         "/v1/api/auth/signup",
-                                        "/v1/api/auth/refreshtoken")
+                                        "/v1/api/auth/refreshtoken",
+                                        "/v1/api/auth/sendotp",
+                                        "/v1/api/auth/verifyotpandchangepassword")
                                 .permitAll()
                                 .requestMatchers(
                                         antMatcher("/v3/api-docs/**"), // swagger

@@ -2,8 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.request.ChangePasswordRequestDTO;
 import com.example.demo.dto.request.CreateSessionDTO;
+import com.example.demo.dto.request.SendOtpRequestDTO;
 import com.example.demo.dto.response.ResponseData;
 import com.example.demo.dto.response.ResponseGetUser;
+import com.example.demo.service.OtpService;
 import com.example.demo.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import com.example.demo.service.impl.OtpServiceImpl;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;

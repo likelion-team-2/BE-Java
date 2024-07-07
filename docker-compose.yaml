@@ -17,6 +17,18 @@ services:
       - POSTGRES_DB=webchat
       - POSTGRES_DATA=/var/lib/postgresql/data/pgdata
 
+# For DockerHub
+#  app:
+#    container_name: java_app
+#    image: minhsang0997/demo:latest
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - postgres
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/webchat
+#      SPRING_DATASOURCE_USERNAME: postgres
+#      SPRING_DATASOURCE_PASSWORD: postgres
 #  redis:
 #    image: redis:latest
 #    restart: always
