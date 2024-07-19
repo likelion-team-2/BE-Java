@@ -4,7 +4,6 @@ import com.example.demo.dto.request.ChatMessageRequestDto;
 import com.example.demo.dto.response.ChatMessageResponseDto;
 import com.example.demo.entities.Message;
 import com.example.demo.service.impl.MessageServiceImpl;
-import com.example.demo.service.impl.RedisServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -20,7 +19,6 @@ public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final MessageServiceImpl messageService;
-    private final RedisServiceImpl redisService;
 
     @MessageMapping("/message")
     public void processMessage(@Payload ChatMessageRequestDto chatMessage) {
@@ -31,8 +29,8 @@ public class ChatController {
                 .sender(chatMessage.getSender())
                 .recipient(chatMessage.getRecipient())
                 .content(chatMessage.getContent())
-                .contentVi(chatMessage.getContent()) // TODO: Will be translated
-                .contentKo(chatMessage.getContent()) // TODO: Will be translated
+                .contentVi(ObjectUtils.isEmpty(message) ? chatMessage.getContent() : message.getContentVi())
+                .contentKo(ObjectUtils.isEmpty(message) ? chatMessage.getContent() : message.getContentKo())
                 .createdAt(ObjectUtils.isEmpty(message) ? null : message.getCreatedAt())
                 .updatedAt(ObjectUtils.isEmpty(message) ? null : message.getUpdatedAt())
                 .build();
