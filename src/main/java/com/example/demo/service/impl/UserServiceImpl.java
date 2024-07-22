@@ -23,10 +23,12 @@ import org.springframework.stereotype.Service;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.example.demo.util.UUID;
 
@@ -223,5 +225,15 @@ public class UserServiceImpl implements UserService {
         user.setUpdatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
         userRepository.save(user);
         return "true";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<UserSignInResponse> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(user -> new UserSignInResponse(user.getId(), user.getUsername(), user.getEmail(), user.getNickname(), user.getRegionCountry()))
+                .collect(Collectors.toList());
     }
 }

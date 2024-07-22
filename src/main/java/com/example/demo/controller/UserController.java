@@ -5,6 +5,7 @@ import com.example.demo.dto.request.CreateSessionDTO;
 import com.example.demo.dto.request.SendOtpRequestDTO;
 import com.example.demo.dto.response.ResponseData;
 import com.example.demo.dto.response.ResponseGetUser;
+import com.example.demo.dto.response.UserSignInResponse;
 import com.example.demo.service.OtpService;
 import com.example.demo.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +25,7 @@ import com.example.demo.service.impl.OtpServiceImpl;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/api/user")
@@ -118,5 +120,19 @@ public class UserController {
         String data = userService.createSession(createSessionDTO);
         ResponseData<String> responseData = new ResponseData<>(HttpStatus.OK.value(), "Session created", data);
         return ResponseEntity.ok(responseData);
+    }
+
+    @Operation(summary = "Get all users", description = "Get the user's information", responses = {
+            @ApiResponse(responseCode = "200", description = "User found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(name = "user found", summary = "return user",
+                                    value = "{\"status\": 200, \"message\": \"User found\", \"data\": [{\"username\": \"username\", \"nickname\": \"nickname\"}}]"
+                            )))
+    })
+    @GetMapping("/getall")
+    public ResponseData<List<UserSignInResponse>> getAll() {
+
+        List<UserSignInResponse> allUsers = userService.getAllUsers();
+        return new ResponseData<>(HttpStatus.OK.value(), "Users found", allUsers);
     }
 }
