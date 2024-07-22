@@ -185,21 +185,20 @@ public class UserServiceImpl implements UserService {
         User userFounded2 = getUser2.get();
 
         Optional<Long> idSU = sessionUsersRepository.findSessionIdsByUserId(userFounded1.getId(), userFounded2.getId());
-        if (!idSU.isEmpty()) {
-            throw new ResourceNotFoundException(HttpStatus.CONFLICT.value(), "Session already exist", "1");
+        if (idSU.isEmpty()) {
+            Session newSession = Session.builder()
+                    .createdAt(LocalDateTime.now())
+                    .build();
+
+            Set<User> users = new HashSet<>();
+            users.add(userFounded1);
+            users.add(userFounded2);
+            newSession.setUsers(users);
+            Session sessionCreated = sessionRepository.save(newSession);
+            return sessionCreated.getId().toString();
         }
 
-        Session newSession = Session.builder()
-                .createdAt(LocalDateTime.now())
-                .build();
-
-        Set<User> users = new HashSet<>();
-        users.add(userFounded1);
-        users.add(userFounded2);
-        newSession.setUsers(users);
-        sessionRepository.save(newSession);
-
-        return "true";
+        return idSU.get().toString();
     }
 
     /**

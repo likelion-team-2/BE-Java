@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -101,5 +103,33 @@ public class MessageServiceImpl implements MessageService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<ChatMessageResponseDto> getFirstFifteenMessages(String sessionId) {
+        // Attempt to retrieve messages from Redis
+        List<ChatMessageResponseDto> messages = redisService.findFirstFifteenMessages(sessionId);
+
+        if (ObjectUtils.isEmpty(messages)) {
+            // If Redis doesn't have the messages, query the database
+            Pageable pageable = PageRequest.of(0, 15, Sort.by("id").descending());
+            List<Message> messageEntities = messageRepository.findBySessionId(Long.parseLong(sessionId), pageable);
+
+            // Convert entities to DTOs (assuming a method exists for this conversion)
+            return messageEntities.stream().map(message -> {
+                User sender = message.getUser();
+                Optional<User> recipientOpt = message.getSession().getUsers().stream().filter(user -> !user.getId().equals(sender.getId())).findFirst();
+                return ChatMessageResponseDto.builder()
+                        .id(message.getId().toString())
+                        .sender(sender.getUsername())
+                        .recipient(recipientOpt.map(User::getUsername).orElse(""))
+                        .content(message.getContent())
+                        .contentVi(message.getContentVi())
+                        .contentKo(message.getContentKo())
+                        .updatedAt(message.getUpdatedAt())
+                        .createdAt(message.getCreatedAt()).build();
+                    }
+            ).collect(Collectors.toList());
+        }
+        return messages;
     }
 }
