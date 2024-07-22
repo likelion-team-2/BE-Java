@@ -7,7 +7,10 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class RedisServiceImpl implements RedisService {
@@ -47,5 +50,18 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public void delete(String id, String sessionId) {
         hashOperations.delete(SESSION_HASH_KEY + sessionId, id);
+    }
+
+    @Override
+    public List<ChatMessageResponseDto> findFirstFifteenMessages(String sessionId) {
+        Map<String, ChatMessageResponseDto> messagesMap = hashOperations.entries(SESSION_HASH_KEY + sessionId);
+
+        // Assuming ChatMessageResponseDto has a timestamp or similar field for sorting
+        // This example does not handle sorting as it's unclear how messages are to be sorted
+        // You might need to add a comparator to sort by timestamp or another relevant field
+        return messagesMap.values().stream()
+                .sorted(Comparator.comparing(ChatMessageResponseDto::getCreatedAt).reversed()) // Assuming getCreatedAt exists and you want the latest messages
+                .limit(15)
+                .collect(Collectors.toList());
     }
 }

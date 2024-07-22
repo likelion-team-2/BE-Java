@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.response.ChatMessageResponseDto;
 
+import java.util.List;
 import java.util.Map;
 
 public interface RedisService {
@@ -40,4 +41,11 @@ public interface RedisService {
      * @param sessionId sessionId
      */
     void delete(String id, String sessionId);
+
+    /**
+     * Find first 15 chat messages in the session
+     * @param sessionId sessionId
+     * @return List<ChatMessageResponseDto>
+     */
+    List<ChatMessageResponseDto> findFirstFifteenMessages(String sessionId);
 }

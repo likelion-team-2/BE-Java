@@ -5,6 +5,8 @@ import com.example.demo.dto.response.ChatMessageResponseDto;
 import com.example.demo.entities.Message;
 import com.example.demo.entities.Session;
 
+import java.util.List;
+
 public interface MessageService {
     /**
      * Save chat message
@@ -19,4 +21,11 @@ public interface MessageService {
      * @param session
      */
     void updateMessageToRedis(ChatMessageResponseDto chatMessageResponse, Session session);
+
+    /**
+     * Service for get first 15 messages
+     * @param sessionId
+     * @return
+     */
+    List<ChatMessageResponseDto> getFirstFifteenMessages(String sessionId);
 }

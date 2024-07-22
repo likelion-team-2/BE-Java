@@ -9,4 +9,8 @@ import java.util.List;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findBySessionOrderByIdDesc(Session session, Pageable pageable);
+
+    List<Message> findBySessionOrderByCreatedAtDesc(Session session, Pageable pageable);
+
+    List<Message> findBySessionId(Long sessionId, Pageable pageable);
 }
