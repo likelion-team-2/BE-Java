@@ -4,9 +4,11 @@ import com.example.demo.dto.request.*;
 
 import com.example.demo.dto.response.ResponseGetUser;
 import com.example.demo.dto.response.UserAuthResponse;
+import com.example.demo.dto.response.UserSignInResponse;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 
 public interface UserService {
 
@@ -51,4 +53,10 @@ public interface UserService {
      * @return  String
      */
     String verifyOtpAndChangePassword (VerifyOTPAndChangePasswordRequestDTO verifyOTPAndChangePasswordRequestDTO) throws NoSuchAlgorithmException, InvalidKeySpecException;
+
+    /**
+     * Service for get all users
+     * @return  User
+     */
+    List<UserSignInResponse> getAllUsers();
 }
