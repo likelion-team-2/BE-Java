@@ -19,4 +19,13 @@ public class ChatMessageResponseDto implements Serializable {
     private String contentKo;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public ChatMessageResponseDto(String id, String sender, String recipient, String content, String contentVi, String contentKo) {
+        this.id = id;
+        this.sender = sender;
+        this.recipient = recipient;
+        this.content = content;
+        this.contentVi = contentVi;
+        this.contentKo = contentKo;
+    }
 }

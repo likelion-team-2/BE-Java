@@ -6,6 +6,7 @@ import com.example.demo.dto.request.SendOtpRequestDTO;
 import com.example.demo.dto.response.ResponseData;
 import com.example.demo.dto.response.ResponseGetUser;
 import com.example.demo.service.OtpService;
+import com.example.demo.service.impl.MessageServiceImpl;
 import com.example.demo.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,6 +25,7 @@ import com.example.demo.service.impl.OtpServiceImpl;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/api/user")
@@ -34,6 +36,8 @@ import java.security.spec.InvalidKeySpecException;
 public class UserController {
 
     private final UserServiceImpl userService;
+    private final MessageServiceImpl messageService;
+
 
     @Operation(summary = "Change password", description = "Change the user's password",  responses = {
             @ApiResponse(responseCode = "200", description = "Password changed in database",
@@ -117,6 +121,25 @@ public class UserController {
         // Logic to create session
         String data = userService.createSession(createSessionDTO);
         ResponseData<String> responseData = new ResponseData<>(HttpStatus.OK.value(), "Session created", data);
+        return ResponseEntity.ok(responseData);
+    }
+
+    @Operation(summary = "Get message", description = "Get the message", responses = {
+            @ApiResponse(responseCode = "200", description = "Message found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(name = "message found", summary = "return message",
+                                    value = "{\"status\": 200, \"message\": \"Message found\", \"data\": [{\"id\": \"id\", \"username\": \"username\", \"content\": \"content\"}]}"
+                            ))),
+            @ApiResponse(responseCode = "404", description = "Message not found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(name = "message not found", summary = "message not found",
+                                    value = "{status: 404, message: \"Message not found\", data: \"1\"}"
+                            )))
+    })
+    @GetMapping("/getmessage")
+    public ResponseEntity<ResponseData<List>> getMessage(@RequestParam String sessionId) {
+        List data = messageService.getFirstFifteenMessages(sessionId);
+        ResponseData<List> responseData = new ResponseData<>(HttpStatus.OK.value(), "Message found", data);
         return ResponseEntity.ok(responseData);
     }
 }

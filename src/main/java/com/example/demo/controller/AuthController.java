@@ -139,8 +139,7 @@ public class AuthController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             examples = @ExampleObject(name = "TBD", summary = "TBD",
                                     value = "{status: 400, message: \"Password must be at least 8 characters\", data: \"1\"}<br />" +
-                                            "{status: 400, message: \"New password must be at least 8 characters\", data: \"2\"}<br />" +
-                                            "{status: 400, message: \"Old password is incorrect\", data: \"3\"}<br />"
+                                            "{status: 400, message: \"OTP or Email is incorrect\", data: \"2\"}<br />"
                             )))
     })
     @PostMapping("/verifyotpandchangepassword")

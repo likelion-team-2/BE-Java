@@ -9,18 +9,18 @@ import com.example.demo.repositories.MessageRepository;
 import com.example.demo.repositories.SessionRepository;
 import com.example.demo.repositories.UserRepository;
 import com.example.demo.service.MessageService;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +30,6 @@ public class MessageServiceImpl implements MessageService {
     private final UserRepository userRepository;
     private final SessionRepository sessionRepository;
     private final RedisServiceImpl redisService;
-    private final GeminiServiceImpl geminiService;
 
     /**
      * @{inheritDoc}
@@ -42,18 +41,12 @@ public class MessageServiceImpl implements MessageService {
         if (sender.isEmpty() || session.isEmpty()) {
             return null;
         }
-
-        String apiResponse = geminiService.callApi(chatMessage.getContent());
-        JsonNode nestedNode = this.parseMessageFromJson(apiResponse);
-        String contentVi = nestedNode.path("contentVi").asText();
-        String contentKo = nestedNode.path("contentKo").asText();
-
         return messageRepository.save(Message.builder()
                 .user(sender.get())
                 .session(session.get())
                 .content(chatMessage.getContent())
-                .contentKo(contentKo)
-                .contentVi(contentVi)
+                .contentKo(chatMessage.getContent()) // TODO: Will be translated
+                .contentVi(chatMessage.getContent()) // TODO: Will be translated
                 .createdAt(LocalDateTime.now())
                 .build());
 
@@ -78,28 +71,38 @@ public class MessageServiceImpl implements MessageService {
         return lastFifteenMessages.get(lastFifteenMessages.size() - 1);
     }
 
-    /**
-     * Parse message from response of gemini api response
-     * @param json JSON string
-     * @return parsed message
-     */
-    private JsonNode parseMessageFromJson(String json) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            // Parse the outer JSON to get the nested JSON string
-            JsonNode rootNode = mapper.readTree(json);
-            String nestedJson = rootNode.path("candidates")
-                    .path(0)
-                    .path("content")
-                    .path("parts")
-                    .path(0)
-                    .path("text")
-                    .asText();
 
-            return mapper.readTree(nestedJson);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+    public List<ChatMessageResponseDto> getFirstFifteenMessages(String sessionId) {
+        // Attempt to retrieve messages from Redis
+        List<ChatMessageResponseDto> messages = redisService.findFirstFifteenMessages(sessionId);
+
+        if (messages == null || messages.isEmpty()) {
+            // If Redis doesn't have the messages, query the database
+            Pageable pageable = PageRequest.of(0, 15, Sort.by("id"));
+            List<Message> messageEntities = messageRepository.findBySessionId(sessionId, pageable);
+
+            // Convert entities to DTOs (assuming a method exists for this conversion)
+            messages = messageEntities.stream()
+                    .map(this::convertEntityToDto)
+                    .collect(Collectors.toList());
+
+            // Optionally, update Redis with these messages for future requests
+            // This step depends on your application's caching strategy
         }
-        return null;
+
+        return messages;
     }
+
+    private ChatMessageResponseDto convertEntityToDto(Message message) {
+        return new ChatMessageResponseDto(
+                message.getId().toString(),
+                message.getUser().getUsername(),
+                message.getSession().getId().toString(),
+                message.getContent(),
+                message.getContentKo(),
+                message.getContentVi()
+        );
+    }
+
 }
